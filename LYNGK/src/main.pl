@@ -1,7 +1,4 @@
-:- include('menus.pl').
-
-:- use_module(library(random)).
-
+:- include('interface.pl').
 
 start:-
         mainMenu.
