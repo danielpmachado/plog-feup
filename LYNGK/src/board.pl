@@ -14,9 +14,6 @@ board([
       ]).
 
 
-%--------------------------------%
-%          Print Board           %
-%--------------------------------%
 
 printBoard(Board) :-
         nl,write('-------------------------------------------------------'),nl,
@@ -89,16 +86,30 @@ createEmptyBoard([BoardHead | BoardTail], N, M) :-
         createEmptyBoard(BoardTail, N1, M).
 
 %------------------------------------------%
-%       Colocar posi��es no tabuleiro      %
+%       Colocar posicoes no tabuleiro  %
 %------------------------------------------%
 
 
 setPositions(Tabuleiro, TabuleiroFinal) :-
-        Posicoes = [ [0,6], [4,1], [2,3] ],
-        setPositions(Tabuleiro, TabuleiroFinal ,Posicoes, 1,[a,a,b,b,c,c,d,d]).
+        Posicoes = [ [6,0], 
+                     [3,1], [5,1], [7,1], [9,1], 
+                     [0,2], [2,2], [4,2], [6,2], [8,2], [10,2], [12,2],
+                     [1,3], [3,3], [5,3], [7,3], [9,3], [11,3],
+                     [0,4], [2,4], [4,4], [6,4], [8,4], [10,4], [12,4],
+                     [1,5], [3,5], [5,5], [7,5], [9,5], [11,5],
+                     [0,6], [2,6], [4,6], [6,6], [8,6], [10,6], [12,6],
+                     [3,7], [5,7], [7,7], [9,7], 
+                     [6,8] 
+                    ],
+        setPositions(Tabuleiro, TabuleiroFinal ,Posicoes, 1,[e,e,e,e,e,e,e,e,
+                                                             p,p,p,p,p,p,p,p,
+                                                             m,m,m,m,m,m,m,m,
+                                                             v,v,v,v,v,v,v,v,
+                                                             a,a,a,a,a,a,a,a,
+                                                             b,b,b,b,b,b,b,b]).
 
 
-setPositions(Tabuleiro, TabuleiroFinal, [Cabeca| _], 3, Lista) :-
+setPositions(Tabuleiro, TabuleiroFinal, [Cabeca| _], 43, Lista) :-
         X = _,
         L = _,
         random_select(X,Lista,L),
@@ -110,8 +121,8 @@ setPositions(Tabuleiro, TabuleiroFinal, [Cabeca| Cauda], N, Lista) :-
         X = _,
         L = _,
         random_select(X,Lista,L),
-        colocaCasa(Tabuleiro, TabuleiroFinal, Cabeca, X),
-        setPositions(Tabuleiro, TabuleiroFinal, Cauda, N1, L).
+        colocaCasa(Tabuleiro, TabuleiroTemp, Cabeca, X),
+        setPositions(TabuleiroTemp, TabuleiroFinal, Cauda, N1, L).
 
 colocaCasa(Tabuleiro, Tabuleiro2, [X | Y], Casa) :-
         colocaCasa(Tabuleiro, Tabuleiro2, X, Y, Casa).
