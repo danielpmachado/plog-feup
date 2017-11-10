@@ -3,8 +3,9 @@
 :-use_module(library(lists)).
 
 startHvH:-
-        createRandomBoard(B),
-        play(B,[none,none],[none,none],[ivory,blue,red,green,black]).
+        board(B),
+        setPositions(B,RandomB),
+        play(RandomB,[none,none],[none,none],[ivory,blue,red,green,black]).
 
 
 play(B,P1,P2,Colors) :-
@@ -17,14 +18,14 @@ play(B,P1,P2,Colors) :-
         (
                 Choice == 1 -> write(1);
                 Choice == 2 -> write(2);
-                Choice == 3 -> claimColor(Colors,NewColors);
+                Choice == 3 -> claimColor(Colors,NewColors,P1,NewP1);
 
                 play(P1,P2,Colors)
 
         ).
 
 
-claimColor(Colors,NewColors):-
+claimColor(Colors,NewColors,Player,NewPlayer):-
 	colorsMenu(Idx),
 	select(Idx,Colors,NewColors),
 	write(NewColors).

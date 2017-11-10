@@ -128,7 +128,7 @@ printColorsMenu:-
 
 moveMenu(MoveType) :-
         printMoveMenu,
-        read(Option)
+        read(Option),
         (
                 Option = 1 -> MoveType is 1;
                 Option = 2 -> MoveType is 2;
