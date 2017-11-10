@@ -47,51 +47,14 @@ printSingleRow([Cell|More],N):-
         write(' | '),
         printSingleRow(More,N).
 
-%--------------------------------%
-%         Criar tabuleiro        %
-%--------------------------------%
+
+%-------------------------------------------------%
+%      Cria tabuleiro com posicoes aleatorias
+%-------------------------------------------------%
 
 
-createRandomBoard(board) :- board  =  _, createBoard(9, 13, B), setPositions(B, board).
-
-createBoard('a', _, []) :- !.
-createBoard(N, M, [K|Ks]) :-
-    N1 is N - 1,
-    createList(M, K),
-    createBoard(N1, M, Ks).
-
-createList('a', []) :- !.
-createList(M, ['a'|Ks]) :-
-    M1 is M - 1,
-    createList(M1, Ks).
-
-%---------------------------------------------------
-%---------------------------------------------------
-%---------------------------------------------------
-
-
-createEmptyLine(_, M, M).
-
-createEmptyLine([A|B], N, M) :-
-        N < M,
-        N1 is N + 1,
-        A = 'a',
-        createEmptyLine(B, N1, M).
-
-createEmptyBoard(_, M, M).
-createEmptyBoard([BoardHead | BoardTail], N, M) :-
-        N >= 1,
-        N1 is N - 1,
-        createEmptyLine(BoardHead, 0, M),
-        createEmptyBoard(BoardTail, N1, M).
-
-%------------------------------------------%
-%       Colocar posicoes no tabuleiro  %
-%------------------------------------------%
-
-
-setPositions(Tabuleiro, TabuleiroFinal) :-
-        Posicoes = [ [6,0], 
+createBoard(Board, FinalBoard) :-
+        Positions = [ [6,0], 
                      [3,1], [5,1], [7,1], [9,1], 
                      [0,2], [2,2], [4,2], [6,2], [8,2], [10,2], [12,2],
                      [1,3], [3,3], [5,3], [7,3], [9,3], [11,3],
@@ -101,66 +64,66 @@ setPositions(Tabuleiro, TabuleiroFinal) :-
                      [3,7], [5,7], [7,7], [9,7], 
                      [6,8] 
                     ],
-        setPositions(Tabuleiro, TabuleiroFinal ,Posicoes, 1,[e,e,e,e,e,e,e,e,
-                                                             p,p,p,p,p,p,p,p,
-                                                             m,m,m,m,m,m,m,m,
-                                                             v,v,v,v,v,v,v,v,
-                                                             a,a,a,a,a,a,a,a,
-                                                             b,b,b,b,b,b,b,b]).
+        createBoard(Board, FinalBoard ,Positions, 1,[e,e,e,e,e,e,e,e,
+                                                      p,p,p,p,p,p,p,p,
+                                                      m,m,m,m,m,m,m,m,
+                                                      v,v,v,v,v,v,v,v,
+                                                      a,a,a,a,a,a,a,a,
+                                                      b,b,b,b,b,b,b,b]).
 
 
-setPositions(Tabuleiro, TabuleiroFinal, [Cabeca| _], 43, Lista) :-
+createBoard(Board, FinalBoard, [Head| _], 43, List) :-
         X = _,
         L = _,
-        random_select(X,Lista,L),
-        colocaCasa(Tabuleiro, TabuleiroFinal, Cabeca, X).
+        random_select(X,List,L),
+        setPosition(Board, FinalBoard, Head, X).
 
 
-setPositions(Tabuleiro, TabuleiroFinal, [Cabeca| Cauda], N, Lista) :-
+createBoard(Board, FinalBoard, [Head| Tail], N, List) :-
         N1 is N+1,
         X = _,
         L = _,
-        random_select(X,Lista,L),
-        colocaCasa(Tabuleiro, TabuleiroTemp, Cabeca, X),
-        setPositions(TabuleiroTemp, TabuleiroFinal, Cauda, N1, L).
+        random_select(X,List,L),
+        setPosition(Board, TabuleiroTemp, Head, X),
+        createBoard(TabuleiroTemp, FinalBoard, Tail, N1, L).
 
-colocaCasa(Tabuleiro, Tabuleiro2, [X | Y], Casa) :-
-        colocaCasa(Tabuleiro, Tabuleiro2, X, Y, Casa).
+setPosition(Board, FinalBoard, [X | Y], Cell) :-
+        setPosition(Board, FinalBoard, X, Y, Cell).
 
-colocaCasa(Tabuleiro, TabuleiroResultante,  X, [Y | _], Casa) :-
-        colocaCasa(Tabuleiro, TabuleiroResultante,0, 0, X, Y, Casa).
+setPosition(Board, FinalBoard,  X, [Y | _], Cell) :-
+        setPosition(Board, FinalBoard,0, 0, X, Y, Cell).
 
 
-colocaCasa([H | T], [H2 | T2], _, Y, XLimite, YLimite, Casa) :-
-        Y == YLimite,
+setPosition([H | T], [H2 | T2], _, Y, XLimit, YLimit, Cell) :-
+        Y == YLimit,
         Y1 is Y + 1,
-        colocaCasaEmLinha(H, H2, 0, XLimite, Casa),
-        colocaCasa(T, T2, 0, Y1, XLimite, YLimite, Casa).
+        setLinePosition(H, H2, 0, XLimit, Cell),
+        setPosition(T, T2, 0, Y1, XLimit, YLimit, Cell).
 
-colocaCasa([H | T], [H2 | T2], _, Y, XLimite, YLimite, Casa) :-
+setPosition([H | T], [H2 | T2], _, Y, XLimit, YLimit, Cell) :-
         Y < 9,
         Y1 is Y + 1,
         H2 = H,
-        colocaCasa(T, T2, 0, Y1, XLimite, YLimite, Casa).
+        setPosition(T, T2, 0, Y1, XLimit, YLimit, Cell).
 
-colocaCasa(_, _, _, _, _, _, _).
+setPosition(_, _, _, _, _, _, _).
 
 
-colocaCasaEmLinha([_ | T], [H2 | T2], X, XLimite, Casa) :-
-        X == XLimite,
+setLinePosition([_ | T], [H2 | T2], X, XLimit, Cell) :-
+        X == XLimit,
         X1 is X + 1,
-        H2 = Casa ,  % [Casa | vazio]
-        colocaCasaEmLinha(T, T2, X1, XLimite, Casa).
+        H2 = Cell ,  % [Casa | vazio]
+        setLinePosition(T, T2, X1, XLimit, Cell).
 
-colocaCasaEmLinha([H | T], [H2 | T2], X, XLimite, Casa) :-
+setLinePosition([H | T], [H2 | T2], X, XLimit, Cell) :-
         X < 13,
         X1 is X + 1,
         H2 = H,
-        colocaCasaEmLinha(T, T2, X1, XLimite, Casa).
+        setLinePosition(T, T2, X1, XLimit, Cell).
 
-colocaCasaEmLinha(_, _, _, _, _).
+setLinePosition(_, _, _, _, _).
 
-
+love:- write('dasd').
 
 %---- para testar
 %- colocaCasa(T, T2, [6,0], 5), board(T), printBoard(T2).
