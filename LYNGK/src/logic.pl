@@ -1,11 +1,10 @@
-
-
+:-include('board.pl').
 :-use_module(library(lists)).
 
 startHvH:-
         board(B),
         setPositions(B,RandomB),
-        play(RandomB,[none,none],[none,none],[ivory,blue,red,green,black]).
+        play(RandomB,[red,blue],[],[ivory,blue,red,green,black]).
 
 
 play(B,P1,P2,Colors) :-
@@ -20,12 +19,20 @@ play(B,P1,P2,Colors) :-
                 Choice == 2 -> write(2);
                 Choice == 3 -> claimColor(Colors,NewColors,P1,NewP1);
 
-                play(P1,P2,Colors)
+                play(B,P1,P2,Colors)
 
         ).
 
 
 claimColor(Colors,NewColors,Player,NewPlayer):-
-	colorsMenu(Idx),
-	select(Idx,Colors,NewColors),
-	write(NewColors).
+  %select color to claim
+	colorsMenu(Colors,Idx),
+  nth0(Idx, Colors, Color),
+	select(Color,Colors,NewColors),
+
+  %check is player can claim color
+  length(Player,Plength),
+  (
+    Plength == 2 -> NewPlayer = Player, write('  You can only claim 2 colors!\n');
+    append(Player,Color,NewPlayer)
+  ).

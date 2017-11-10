@@ -95,34 +95,25 @@ printPlayer2 :-
 
 %%%%%%%%%%%%%%%%% Colors %%%%%%%%%%%%%%%%%%%
 
-printPlayersColors([C11,C12],[C21,C22]) :-
+printPlayersColors(P1,P2) :-
         write(' Claimed Colors\n'),
-        write(' -> Player 1: '), write(C11), write(' - '), write(C12), nl,
-        write(' -> Player 2: '), write(C21), write(' - '), write(C22), nl.
+        write(' -> Player 1: '), printList(P1), nl,
+        write(' -> Player 2: '), printList(P2), nl.
 
-colorsMenu(Idx):-
-        printColorsMenu,
-        read(Option),
-        (
-                Option = 1 -> Idx = ivory;
-                Option = 2 -> Idx = blue;
-                Option = 3 -> Idx = red;
-                Option = 4 -> Idx = green;
-                Option = 5 -> Idx = black;
-                Option = 6 -> Idx = exit;
-
-                colorsMenu(Idx)
-        ).
-
-printColorsMenu:-
+colorsMenu(Colors,Idx):-
         write(' Claim Color            \n'),
-        write('   1 - Ivory            \n'),
-        write('   2 - Blue             \n'),
-        write('   3 - Red              \n'),
-        write('   4 - Green            \n'),
-        write('   5 - Black            \n'),
-        write('   6 - Go back          \n').
+        printColorsMenu(Colors,1),
+        read(Option),
+        length(Colors,Length),
+        ( Option > Length -> colorsMenu(Colors,Idx); Idx is Option-1).
 
+printColorsMenu([],_).
+
+printColorsMenu([H|T],N):-
+        write('   '), write(N), write(' - '),
+        write(H), nl,
+        N1 is N+1,
+        printColorsMenu(T,N1).
 
 %%%%%%%%%%%%%%%%% Move Menu %%%%%%%%%%%%%%%%%%
 
