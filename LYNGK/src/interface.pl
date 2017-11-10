@@ -114,7 +114,7 @@ colorsMenu(Idx):-
                 Option = '5' -> Idx = black;
                 Option = '6' -> Idx = exit;
                 
-                moveMenu(Idx)
+                colorsMenu(Idx)
         ).
 
 printColorsMenu:-
@@ -138,7 +138,6 @@ moveMenu(MoveType) :-
                 Option = '2' -> MoveType is 2;
                 Option = '3' -> MoveType is 3;
                 
-                moveMenu(MoveType)
         ).
 
 printMoveMenu :-

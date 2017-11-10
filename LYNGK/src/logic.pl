@@ -16,11 +16,17 @@ play(P1,P2,Colors) :-
         (
                 Choice == 1 -> write(1);
                 Choice == 2 -> write(2);
-                Choice == 3 -> colorsMenu(Idx), select(Idx,Colors,NewColors), write(NewColors);
+                Choice == 3 -> claimColor(Colors,NewColors);
                 
                 play(P1,P2,Colors)
                       
         ).
+		
+		
+claimColor(Colors,NewColors):-
+	colorsMenu(Idx), 
+	select(Idx,Colors,NewColors), 
+	write(NewColors).
 
 
       
