@@ -1,18 +1,17 @@
 :-include('utils.pl').
-:-include('logic.pl').
+
 
 %%%%%%%%%%%%%%%%% Main Menu %%%%%%%%%%%%%%%%%%%
 
 mainMenu :-
         clearScreen,
         printMainMenu,
-        get_char(Option), 
-        get_char(_),
+        read(Option),
         (
-                Option = '1' -> playMenu;
-                Option = '2' -> infoMenu;
-                Option = '3' -> write('Exit\n');
-        
+                Option = 1 -> playMenu;
+                Option = 2 -> infoMenu;
+                Option = 3 -> halt;
+
                 mainMenu
         ).
 
@@ -33,14 +32,13 @@ printMainMenu :-
 playMenu :-
         clearScreen,
         printPlayMenu,
-        get_char(Option),
-        get_char(_),
+        read(Option),
         (
-                Option = '1' -> startHvH;
-                Option = '2' -> playMenu;
-                Option = '3' -> playMenu;
-                Option = '4' -> mainMenu;
-                
+                Option = 1 -> startHvH;
+                Option = 2 -> playMenu;
+                Option = 3 -> playMenu;
+                Option = 4 -> mainMenu;
+
                 playMenu
         ).
 
@@ -62,7 +60,7 @@ printPlayMenu :-
 infoMenu :-
         clearScreen,
         printInfoMenu,
-        get_char(_),   
+        read(_),
         mainMenu.
 
 printInfoMenu :-
@@ -87,33 +85,32 @@ printPlayer1 :-
         write('=================================================================\n'),
         write('==                        PLAYER 1`s turn                      ==\n'),
         write('=================================================================\n').
-       
-        
+
+
 printPlayer2 :-
         printLines(2),
         write('=================================================================\n'),
         write('==                        PLAYER 2`s turn                      ==\n'),
         write('=================================================================\n').
-        
+
 %%%%%%%%%%%%%%%%% Colors %%%%%%%%%%%%%%%%%%%
 
 printPlayersColors([C11,C12],[C21,C22]) :-
-        write(' Claimed Colors\n'),       
+        write(' Claimed Colors\n'),
         write(' -> Player 1: '), write(C11), write(' - '), write(C12), nl,
         write(' -> Player 2: '), write(C21), write(' - '), write(C22), nl.
 
 colorsMenu(Idx):-
         printColorsMenu,
-        get_char(Option),
-        get_char(_),
+        read(Option),
         (
-                Option = '1' -> Idx = ivory;
-                Option = '2' -> Idx = blue;
-                Option = '3' -> Idx = red;
-                Option = '4' -> Idx = green;
-                Option = '5' -> Idx = black;
-                Option = '6' -> Idx = exit;
-                
+                Option = 1 -> Idx = ivory;
+                Option = 2 -> Idx = blue;
+                Option = 3 -> Idx = red;
+                Option = 4 -> Idx = green;
+                Option = 5 -> Idx = black;
+                Option = 6 -> Idx = exit;
+
                 colorsMenu(Idx)
         ).
 
@@ -131,13 +128,13 @@ printColorsMenu:-
 
 moveMenu(MoveType) :-
         printMoveMenu,
-        get_char(Option),
-        get_char(_),
+        read(Option)
         (
-                Option = '1' -> MoveType is 1;
-                Option = '2' -> MoveType is 2;
-                Option = '3' -> MoveType is 3;
-                
+                Option = 1 -> MoveType is 1;
+                Option = 2 -> MoveType is 2;
+                Option = 3 -> MoveType is 3;
+                Option = 4 -> halt
+
         ).
 
 printMoveMenu :-
@@ -145,4 +142,5 @@ printMoveMenu :-
         write('   1 - Normal           \n'),
         write('   2 - LYNGK            \n'),
         write('   3 - Claim Color      \n'),
+        write('   4 - Exit             \n'),
         write('                        \n').

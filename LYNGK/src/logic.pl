@@ -1,14 +1,15 @@
+
+
 :-use_module(library(lists)).
 
 startHvH:-
-        %createBoard
-        %initBoard
-        play([none,none],[none,none],[ivory,blue,red,green,black]).
+        createRandomBoard(B),
+        play(B,[none,none],[none,none],[ivory,blue,red,green,black]).
 
-                    
-play(P1,P2,Colors) :-
+
+play(B,P1,P2,Colors) :-
         clearScreen,
-         %printBoard
+        printBoard(B),
         printPlayersColors(P1,P2),
 
         printPlayer1,
@@ -17,16 +18,13 @@ play(P1,P2,Colors) :-
                 Choice == 1 -> write(1);
                 Choice == 2 -> write(2);
                 Choice == 3 -> claimColor(Colors,NewColors);
-                
+
                 play(P1,P2,Colors)
-                      
+
         ).
-		
-		
+
+
 claimColor(Colors,NewColors):-
-	colorsMenu(Idx), 
-	select(Idx,Colors,NewColors), 
+	colorsMenu(Idx),
+	select(Idx,Colors,NewColors),
 	write(NewColors).
-
-
-      
