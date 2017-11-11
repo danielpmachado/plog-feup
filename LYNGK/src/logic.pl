@@ -32,54 +32,45 @@ turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
 
 
 
-makeMove(Complete,Claimed,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
+makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         printMoveMenu,
         read(Option),
         (
-                Option = 1 -> write(1), normalMove(Board,NewBoard),NewPlayer = Player1,NewColors =Colors, Complete is 1;
+                Option = 1 -> write(1), normalMove(Complete,Board,P1,P2,Colors,NewBoard),NewPlayer = P1,NewColors =Colors, Complete is 1;
                 Option = 2 -> write(2), Complete is 1;
                 Option = 3 -> Complete is 0,
-                              (Claimed \= 1  -> claimColor(Colors,NewColors,Player1,NewPlayer), NewBoard = Board, Claimed1 is 1;
+                              (Claimed \= 1  -> claimColor(Colors,NewColors,P1,NewPlayer), NewBoard = Board, Claimed1 is 1;
                               write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is Claimed);
                 Option = 4 -> halt;
 
                 write(' || Please choose a valid option. ||'),nl,nl,Complete is 0
         ),
-        (Complete \= 1 -> makeMove(Complete1,Claimed1,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors); nl).
+        (Complete \= 1 -> makeMove(Complete1,Claimed1,Board,NewPlayer,P2,Colors,NewBoard,NewPlayer,NewColors); nl).
 
 
-normalMove(B,B2):-
-        selectPiece(B,Bt,X),
-        write('piece - '), write(X),
-        movePiece(Bt,B2,X),
-        printBoard(B2).
+normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
+        getInitialPos(X1,Y1),
+        checkValidMove(Complete,Board,P1,P2,X1,Y1),
+        getPosition(Board, 0, 0, X1, Y1, P),
+        setPosition(Board, Bt, 0, 0, X1, Y1, x),
+        write('piece - '), write(P),
+        movePiece(Bt,NewBoard,P),
+        printBoard(NewBoard).
 
 
+checkValidMove(Complete,B,P1,P2,X1,Y1):-
+        getPosition(B, 0, 0, X1, Y1, P),
+        ( member(P,P2) -> Complete is 0,
+                          write(' || You can not move '), write(P), write(' pieces || ');
+                          write('')).
 
-claimColor(Colors,FinalColors,Player,NewPlayer):-
-	colorsMenu(Colors,Idx),
-  nth0(Idx, Colors, Color),
-	select(Color,Colors,NewColors),
-
-  length(Player,Plength),
-  (
-    Plength == 3 ->
-    NewPlayer = Player,
-    FinalColors =Colors,
-    write('  || You can only claim 2 colors ||'),nl,nl;
-
-    append(Player,[Color],NewPlayer),
-    FinalColors= NewColors
-  ).
-
-selectPiece(B,B2,P):-
-        nl,write('Select initial position'),nl,
-        write('Column number : '),
+getInitialPos(X,Y):-
+        nl,write('   Select initial position'),nl,
+        write('   Column number '),
         getColumnNumber(X),
-        write('Line number : '),
-        getLineNumber(Y),
-        getPosition(B, 0, 0, X, Y, P),
-        setPosition(B, B2, 0, 0, X, Y, x).
+        write('   Line number '),
+        getLineNumber(Y).
+
 
 movePiece(B,B2,Piece):-
         nl,write('Select final position'),nl,
@@ -111,3 +102,19 @@ getLineNumber(X) :-
 getLineNumber(X) :-
         write('Please pick a number between 0 and 9...'),
         getLineNumber(X).
+
+claimColor(Colors,FinalColors,Player,NewPlayer):-
+        	colorsMenu(Colors,Idx),
+          nth0(Idx, Colors, Color),
+        	select(Color,Colors,NewColors),
+
+          length(Player,Plength),
+          (
+            Plength == 3 ->
+            NewPlayer = Player,
+            FinalColors =Colors,
+            write('  || You can only claim 2 colors ||'),nl,nl;
+
+            append(Player,[Color],NewPlayer),
+            FinalColors= NewColors
+          ).

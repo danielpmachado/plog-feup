@@ -49,7 +49,15 @@ printRowByRow([Line|Rest], N) :-
         printRowByRow(Rest, N1).
 
 printSingleRow([Cell], N):-
-        write(Cell),
+        (
+          Cell = ivory -> write(m);
+          Cell = red -> write(e);
+          Cell = blue -> write(a);
+          Cell = black -> write(p);
+          Cell = green -> write(v);
+          Cell = white -> write(b);
+          write('.')
+        ),
         write(' |      '),
         write(' | '),
         write(N),
@@ -57,7 +65,15 @@ printSingleRow([Cell], N):-
         printBlackLine.
 
 printSingleRow([Cell|More],N):-
-        write(Cell),
+        (
+          Cell = ivory -> write(m);
+          Cell = red -> write(e);
+          Cell = blue -> write(a);
+          Cell = black -> write(p);
+          Cell = green -> write(v);
+          Cell = white -> write(b);
+          write('.')
+        ),
         write(' | '),
         printSingleRow(More,N).
 
@@ -78,12 +94,12 @@ createBoard(Board, FinalBoard) :-
                      [3,7], [5,7], [7,7], [9,7],
                      [6,8]
                     ],
-        createBoard(Board, FinalBoard ,Positions, 1,[e,e,e,e,e,e,e,e,
-                                                      p,p,p,p,p,p,p,p,
-                                                      m,m,m,m,m,m,m,m,
-                                                      v,v,v,v,v,v,v,v,
-                                                      a,a,a,a,a,a,a,a,
-                                                      b,b,b,b,b,b,b,b]).
+        createBoard(Board, FinalBoard ,Positions, 1,[red,red,red,red,red,red,red,red,
+                                                      black,black,black,black,black,black,black,black,
+                                                      ivory,ivory,ivory,ivory,ivory,ivory,ivory,ivory,
+                                                      green,green,green,green,green,green,green,green,
+                                                      blue,blue,blue,blue,blue,blue,blue,blue,
+                                                      white,white,white]).
 
 
 createBoard(Board, FinalBoard, [Head| _], 43, List) :-
