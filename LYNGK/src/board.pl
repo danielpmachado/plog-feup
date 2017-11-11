@@ -15,6 +15,20 @@ board([
 
 
 
+board2([
+         [.,.,.,.,.,.,p,.,.,.,.,.,.],
+         [.,.,.,e,.,m,.,v,.,a,.,.,.],
+         [m,.,e,.,a,.,e,.,e,.,b,.,a],
+         [.,v,.,p,.,b,.,m,.,v,.,m,.],
+         [b,.,b,.,a,.,e,.,p,.,b,.,p],
+         [.,p,.,v,.,m,.,v,.,a,.,b,.],
+         [e,.,v,.,a,.,e,.,e,.,m,.,b],
+         [.,.,.,m,.,p,.,a,.,p,.,.,.],
+         [.,.,.,.,.,.,v,.,.,.,.,.,.]
+
+      ]).
+
+
 printBoard(Board) :-
         nl,write('-------------------------------------------------------'),nl,
         printRowByRow(Board,0), nl,
@@ -123,7 +137,32 @@ setLinePosition([H | T], [H2 | T2], X, XLimit, Cell) :-
 
 setLinePosition(_, _, _, _, _).
 
-love:- write('dasd').
+getPosition([H | T], _, Y, XLimit, YLimit, Cell) :-
+        Y == YLimit,
+        Y1 is Y + 1,
+        getLinePosition(H, 0, XLimit, Cell),
+        getPosition(T,0, Y1, XLimit, YLimit, Cell).
+
+getPosition([H | T], _, Y, XLimit, YLimit, Cell) :-
+        Y < 9,
+        Y1 is Y + 1,
+        getPosition(T, 0, Y1, XLimit, YLimit, Cell).
+
+getPosition(_, _, _, _, _, _).
+
+
+getLinePosition([H | T], X, XLimit, Cell) :-
+        X == XLimit,
+        X1 is X + 1,
+        Cell = H ,  % [Casa | vazio]
+        getLinePosition(T, X1, XLimit, Cell).
+
+getLinePosition([H | T], X, XLimit, Cell) :-
+        X < 13,
+        X1 is X + 1,
+        getLinePosition(T, X1, XLimit, Cell).
+
+getLinePosition(_, _, _, _).
 
 %---- para testar
 %- colocaCasa(T, T2, [6,0], 5), board(T), printBoard(T2).
