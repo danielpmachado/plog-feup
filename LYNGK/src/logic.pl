@@ -3,7 +3,7 @@
 :-include('board.pl').
 
 startHvH:-
-        board(B)
+        board(B),
         createBoard(B,RandomB),
         play(RandomB,[none,none],[none,none],[ivory,blue,red,green,black]).
 
