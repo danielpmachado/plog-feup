@@ -16,4 +16,5 @@ printList([H|T]) :-
   write(H), write('  '),
   printList(T).
 
-printList([]).
+printList([]):- write('').
+printList(X):-  write(X).

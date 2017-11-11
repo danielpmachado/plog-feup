@@ -81,40 +81,36 @@ printInfoMenu :-
 
 %%%%%%%%%%%%%%%%% Players %%%%%%%%%%%%%%%%%%%
 
-printPlayer1 :-
+printPlayer([H|T]) :-
         printLines(2),
         write('=================================================================\n'),
-        write('==                        PLAYER 1`s turn                      ==\n'),
-        write('=================================================================\n').
-
-
-printPlayer2 :-
-        printLines(2),
-        write('=================================================================\n'),
-        write('==                        PLAYER 2`s turn                      ==\n'),
+        write('==                        PLAYER '),write(H),write('`s turn                      ==\n'),
         write('=================================================================\n').
 
 %%%%%%%%%%%%%%%%% Colors %%%%%%%%%%%%%%%%%%%
 
-printPlayersColors(P1,P2) :-
+printPlayersColors([H1|T1],[H2|T2]) :-
         write(' Claimed Colors\n'),
-        write(' -> Player 1: '), printList(P1), nl,
-        write(' -> Player 2: '), printList(P2), nl.
+        write(' -> Player '), write(H1), write(': '), printList(T1), nl,
+        write(' -> Player '), write(H2), write(': '), printList(T2), nl.
 
 colorsMenu(Colors,Idx):-
-        write(' Claim Color            \n'),
+        write(' Claim Color\n'),
         printColorsMenu(Colors,1),
         read(Option),
         length(Colors,Length),
         ( Option > Length -> colorsMenu(Colors,Idx); Idx is Option-1).
 
-printColorsMenu([],_).
+
 
 printColorsMenu([H|T],N):-
         write('   '), write(N), write(' - '),
         write(H), nl,
         N1 is N+1,
         printColorsMenu(T,N1).
+
+printColorsMenu([],_).
+
 
 %%%%%%%%%%%%%%%%% Move Menu %%%%%%%%%%%%%%%%%%
 
