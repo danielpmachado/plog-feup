@@ -21,15 +21,22 @@ turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
         clearScreen,
         printBoard(Board),
         printPlayersColors(Player1,Player2),
-
         printPlayer(Player1),
-        moveMenu(Choice),
-        (
-                Choice == 1 -> write(1);
-                Choice == 2 -> write(2);
-                Choice == 3 -> claimColor(Colors,NewColors,Player1,NewPlayer), NewBoard = Board;
 
-                turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors)
+        makeMove(Complete,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors),
+        (Complete \= 1 -> makeMove(Complete,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors); nl).
+
+
+makeMove(Complete,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
+        printMoveMenu,
+        read(Option),
+        (
+                Option = 1 -> write(1), Complete is 0;
+                Option = 2 -> write(2), Complete is 0;
+                Option = 3 -> claimColor(Colors,NewColors,Player1,NewPlayer), NewBoard = Board, Complete is 0;
+                Option = 4 -> halt;
+
+                Complete is 0
 
         ).
 
@@ -43,16 +50,19 @@ normalMove(B):-
 
 
 claimColor(Colors,FinalColors,Player,NewPlayer):-
-  % select color to claim
 	colorsMenu(Colors,Idx),
   nth0(Idx, Colors, Color),
 	select(Color,Colors,NewColors),
 
-  % check if player can claim color
   length(Player,Plength),
   (
-    Plength == 3 -> NewPlayer = Player,FinalColors =Colors, write('  You can only claim 2 colors!\n');
-    append(Player,[Color],NewPlayer),FinalColors= NewColors
+    Plength == 3 ->
+    NewPlayer = Player,
+    FinalColors =Colors,
+    write('  You can only claim 2 colors!\n');
+
+    append(Player,[Color],NewPlayer),
+    FinalColors= NewColors
   ).
 
 selectPiece(B, P):-
