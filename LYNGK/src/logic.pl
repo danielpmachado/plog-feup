@@ -4,7 +4,7 @@
 :-include('board.pl').
 
 startHvH:-
-        board(B),
+        board4(B),
         createBoard(B,RandomB),
         random(0,2,R),
         (
@@ -24,7 +24,7 @@ play(Board,Player1,Player2,Colors) :-
 
 turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
         clearScreen,
-        printBoard(Board),
+        printBoard(Board),nl,
         printPlayersColors(Player1,Player2),
         printPlayer(Player1),
 
@@ -43,23 +43,23 @@ makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
                               write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is Claimed);
                 Option = 4 -> halt;
 
-                write(' || Please choose a valid option. ||'),nl,nl,Complete is 0
+                write(' || Please choose a valid option. ||\n'),Complete is 0
         ),
         (Complete \= 1 -> makeMove(Complete1,Claimed1,Board,NewPlayer,P2,Colors,NewBoard,NewPlayer,NewColors); nl).
 
 
 normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
         getInitialPos(X1,Y1),
-        checkValidMove(Complete,Board,P1,P2,X1,Y1),
+        %checkValidMove(Complete,Board,P1,P2,X1,Y1),
         getPosition(Board, 0, 0, X1, Y1, P),
-        setPosition(Board, Bt, 0, 0, X1, Y1, x),
+        setPosition(Board, Bt, 0, 0, X1, Y1, [x]),
         write('piece - '), write(P),
         movePiece(Bt,NewBoard,P),
         printBoard(NewBoard).
 
 
 checkValidMove(Complete,B,P1,P2,X1,Y1):-
-        getPosition(B, 0, 0, X1, Y1, P),
+        getPosition(B, 0, 0, X1, Y1, [H|T]),
         ( member(P,P2) -> Complete is 0,
                           write(' || You can not move '), write(P), write(' pieces || ');
                           write('')).
