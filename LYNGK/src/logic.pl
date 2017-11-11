@@ -47,12 +47,12 @@ makeMove(Complete,Claimed,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewCol
         ),
         (Complete \= 1 -> makeMove(Complete1,Claimed1,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors); nl).
 
-normalMove(B):-
-        selectPiece(B, Piece),
-        write('piece - '), write(Piece),
-        movePiece(B,B2,Piece),
-        B = B2,
-        printBoard(B).
+
+normalMove(B,B2):-
+        selectPiece(B,Bt,X),
+        write('piece - '), write(X),
+        movePiece(Bt,B2,X),
+        printBoard(B2).
 
 
 
@@ -72,16 +72,19 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
     FinalColors= NewColors
   ).
 
-selectPiece(B, P):-
+selectPiece(B,B2,P):-
+        nl,write('Select initial position'),nl,
         write('Column number : '),
-        getColumnNumber(X),nl,
+        getColumnNumber(X),
         write('Line number : '),
         getLineNumber(Y),
-        getPosition(B, 0, 0, X, Y, P).
+        getPosition(B, 0, 0, X, Y, P),
+        setPosition(B, B2, 0, 0, X, Y, x).
 
 movePiece(B,B2,Piece):-
+        nl,write('Select final position'),nl,
         write('Column number : '),
-        getColumnNumber(X),nl,
+        getColumnNumber(X),
         write('Line number : '),
         getLineNumber(Y),
         setPosition(B, B2, 0, 0, X, Y, Piece).
