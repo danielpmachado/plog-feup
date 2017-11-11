@@ -1,11 +1,16 @@
 
 :-use_module(library(lists)).
+
 :-include('board.pl').
 
 startHvH:-
         board(B),
         createBoard(B,RandomB),
-        play(RandomB,[1],[2],[ivory,blue,red,green,black]).
+        random(0,2,R),
+        (
+          R = 0 -> play(RandomB,[1],[2],[ivory,blue,red,green,black]);
+          play(RandomB,[2],[1],[ivory,blue,red,green,black])
+        ).
 
 
 
