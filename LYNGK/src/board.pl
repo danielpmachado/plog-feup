@@ -29,16 +29,44 @@ board2([
       ]).
 
 
+board3([
+         [[.],[.],[.],[.],[.],[.],[p,m,v],[.],[.],[.],[.],[.],[.]],
+         [[.],[.],[.],[e],[.],[m],[.],[v],[.],[a],[.],[.],[.]],
+         [[m],[.],[e],[.],[a],[.],[e],[.],[e],[.],[b,a,v],[.],[a]],
+         [[.],[v],[.],[p],[.],[b,p],[.],[m],[.],[v],[.],[m,v],[.]],
+         [[b],[.],[b],[.],[a],[.],[e,p,v,a,b],[.],[p],[.],[b],[.],[p]],
+         [[.],[p,e,v,a,b],[.],[v],[.],[m],[.],[v],[.],[a,m,v],[.],[b],[.]],
+         [[e],[.],[v],[.],[a],[.],[e],[.],[e],[.],[m],[.],[b]],
+         [[.],[.],[.],[m,p,v],[.],[p],[.],[a],[.],[p,a,m,v],[.],[.],[.]],
+         [[.],[.],[.],[.],[.],[.],[v],[.],[.],[.],[.],[.],[.]]
+
+      ]).
+
+
+board4([
+        [[.],[.],[.],[.],[.],[.],[x],[.],[.],[.],[.],[.],[.]],
+        [[.],[.],[.],[x],[.],[x],[.],[x],[.],[x],[.],[.],[.]],
+        [[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x]],
+        [[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.]],
+        [[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x]],
+        [[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.]],
+        [[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x],[.],[x]],
+        [[.],[.],[.],[x],[.],[x],[.],[x],[.],[x],[.],[.],[.]],
+        [[.],[.],[.],[.],[.],[.],[x],[.],[.],[.],[.],[.],[.]]
+
+      ]).
+
+
 printBoard(Board) :-
-        nl,write('-------------------------------------------------------'),nl,
+        nl,write('---------------------------------------------------------------------------------------------------------------------------------------------------------------'),nl,
         printRowByRow(Board,0), nl,
-        write('-------------------------------------------------------'),nl,
-        write(' | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 11| 12| '),
+        write('---------------------------------------------------------------------------------------------------------------------------------------------------------------'),nl,
+        write(' |     0     |     1     |     2     |     3     |     4     |     5     |     6     |     7     |     8     |     9     |    10     |    11     |    12     | '),
         printBlackLine.
 
 printBlackLine :-
         nl,
-        write('-------------------------------------------------------'),
+        write('---------------------------------------------------------------------------------------------------------------------------------------------------------------'),
         nl.
 
 printRowByRow([],9).
@@ -49,7 +77,7 @@ printRowByRow([Line|Rest], N) :-
         printRowByRow(Rest, N1).
 
 printSingleRow([Cell], N):-
-        write(Cell),
+        printCell(Cell),
         write(' |      '),
         write(' | '),
         write(N),
@@ -57,9 +85,64 @@ printSingleRow([Cell], N):-
         printBlackLine.
 
 printSingleRow([Cell|More],N):-
-        write(Cell),
+       %% write(Cell),
+        printCell(Cell),
         write(' | '),
         printSingleRow(More,N).
+
+
+printCell(Cell):-
+        lengthOf(Cell,L),
+        cellLength(Cell,L).
+
+cellLength(Cell,L):-
+        L == 1,
+        write('    '),
+        printContent(Cell,1,1),
+        write('    ').
+
+cellLength(Cell,L):-
+        L == 2,
+        write('   '),
+        printContent(Cell,1,2),
+        write('   ').
+
+cellLength(Cell,L):-
+        L == 3,
+        write('  '),
+        printContent(Cell,1,3),
+        write('  ').
+
+cellLength(Cell,L):-
+        L == 4,
+        write(' '),
+        printContent(Cell,1,4),
+        write(' ').
+
+cellLength(Cell,L):-
+        L == 5,
+        printContent(Cell,1,5).
+
+
+printContent([],_,_).
+
+printContent([H|_],N,L):-
+       N == L,
+       write(H).
+
+
+printContent([H|T],N,L):-
+        N1 is N+1,
+        write(H), write(' '),
+        printContent(T,N1,L).
+
+
+
+lengthOf([], 0).
+lengthOf([_|T], L):-
+       lengthOf(T, TailLength),
+       L is TailLength + 1.
+
 
 
 %-------------------------------------------------%
@@ -78,13 +161,14 @@ createBoard(Board, FinalBoard) :-
                      [3,7], [5,7], [7,7], [9,7],
                      [6,8]
                     ],
-        createBoard(Board, FinalBoard ,Positions, 1,[e,e,e,e,e,e,e,e,
-                                                      p,p,p,p,p,p,p,p,
-                                                      m,m,m,m,m,m,m,m,
-                                                      v,v,v,v,v,v,v,v,
-                                                      a,a,a,a,a,a,a,a,
-                                                      b,b,b,b,b,b,b,b]).
-
+        createBoard(Board, FinalBoard ,Positions, 1,[ [e],[e],[e],[e],[e],[e],[e],[e],[e],
+                                                      [p],[p],[p],[p],[p],[p],[p],[p],[p],
+                                                      [m],[m],[m],[m],[m],[m],[m],[m],[m],
+                                                      [v],[v],[v],[v],[v],[v],[v],[v],[v],
+                                                      [a],[a],[a],[a],[a],[a],[a],[a],[a],
+                                                      [b],[b],[b]
+                                                    ]).
+                                                   
 
 createBoard(Board, FinalBoard, [Head| _], 43, List) :-
         X = _,

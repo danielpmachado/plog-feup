@@ -4,7 +4,7 @@
 :-include('board.pl').
 
 startHvH:-
-        board(B),
+        board4(B),
         createBoard(B,RandomB),
         random(0,2,R),
         (
@@ -36,14 +36,14 @@ makeMove(Complete,Claimed,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewCol
         printMoveMenu,
         read(Option),
         (
-                Option = 1 -> write(1), normalMove(Board,NewBoard),NewPlayer = Player1,NewColors =Colors, Complete is 1;
+                Option = 1 -> write(1), Complete is 1;
                 Option = 2 -> write(2), Complete is 1;
                 Option = 3 -> Complete is 0,
                               (Claimed \= 1  -> claimColor(Colors,NewColors,Player1,NewPlayer), NewBoard = Board, Claimed1 is 1;
-                              write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is Claimed);
+                              write(' || You have already claimed a color this turn ||\n'), Claimed1 is Claimed);
                 Option = 4 -> halt;
 
-                write(' || Please choose a valid option. ||'),nl,nl,Complete is 0
+                write(' || Please choose a valid option. ||\n'),Complete is 0
         ),
         (Complete \= 1 -> makeMove(Complete1,Claimed1,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors); nl).
 
@@ -66,7 +66,7 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
     Plength == 3 ->
     NewPlayer = Player,
     FinalColors =Colors,
-    write('  || You can only claim 2 colors ||'),nl,nl;
+    write('  || You can only claim 2 colors ||\n');
 
     append(Player,[Color],NewPlayer),
     FinalColors= NewColors
