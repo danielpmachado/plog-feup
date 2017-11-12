@@ -68,8 +68,20 @@ checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
           checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
           checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
           checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
+          checkNeutralTop(Board,P1,X1,Y1,X2,Y2), write(' -> valid neutral move\n'),
           checkFinalStack(Board,X1,Y1,X2,Y2), write(' -> valid final stack\n'),Complete is 1;
           nl,write(' || Invalid Move ||'),nl,nl,Complete is 0
+        ).
+
+checkNeutralTop(Board,P1,X1,Y1,X2,Y2):-
+        index(Board,Y1,X1,Piece1),
+        nth0(0,Piece1,Top),
+        (
+          \+(member(Top,P1))-> index(Board,Y2,X2,Piece2),
+                               (is_list(Piece1) ->length(Piece1,L1);L1 is 1),
+                               (is_list(Piece2) ->length(Piece2,L2);L2 is 1),
+                               L2 =< L1;
+                               yes
         ).
 
 checkFinalStack(Board,X1,Y1,X2,Y2):-
