@@ -38,27 +38,27 @@ transform(X,Y):-
 
 
 getColumnNumber(X) :-
-           X = _,
-           max = _,
-           read(X),
-           number(X),
-           X > -1 , X < 13.
+    X = _,
+    max = _,
+    read(X),
+    number(X),
+    X > -1 , X < 13.
 
 getColumnNumber(X) :-
-           write('Please pick a number between 0 and 13...'),
-           getColumnNumber(X).
+    write('Please pick a number between 0 and 13...'),
+    getColumnNumber(X).
 
 
 getLineNumber(X) :-
-           X = _,
-           max = _,
-           read(X),
-           number(X),
-           X > -1 , X < 9.
+    X = _,
+    max = _,
+    read(X),
+    number(X),
+    X > -1 , X < 9.
 
 getLineNumber(X) :-
-           write('Please pick a number between 0 and 9...'),
-           getLineNumber(X).
+    write('Please pick a number between 0 and 9...'),
+    getLineNumber(X).
 
 
 abs(X,Y):-
@@ -69,3 +69,7 @@ abs(X,Y):-
     X >= 0,
     Y is X.
 
+is_set(Lst) :-
+    setof(X, member(X, Lst), Set),
+    length(Lst, N),
+    length(Set, N).

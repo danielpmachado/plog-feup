@@ -55,8 +55,7 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
         (Complete = 1 ->  setPosition(Board, B, 0, 0, X1, Y1, [x]),
                           index(Board,Y1,X1,InitPos),
                           index(Board,Y2,X2,FinalPos),
-                          nth0(0,InitPos,Top),
-                          append(FinalPos,[Top],Final),
+                          append(InitPos,FinalPos,Final),
                           setPosition(B, NewBoard, 0, 0, X2, Y2, Final);
                           NewBoard = Board
                        ).
@@ -64,8 +63,8 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
 
 checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
         (
-          checkTopPiece(Board,P2,X1,Y1), write(' -> valid top piece color\n'),
-          checkPosition(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
+          checkTopPiece(Board,P2,X1,Y1), nl,write(' -> valid top piece color\n'),
+          checkDiagonal(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
           checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
           checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
           checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
@@ -79,7 +78,11 @@ checkFinalStack(Board,X1,Y1,X2,Y2):-
         (is_list(Piece1) ->length(Piece1,L1);L1 is 1),
         (is_list(Piece2) ->length(Piece2,L2);L2 is 1),
         Total is L1 + L2,
-        Total =< 5.
+        Total =< 5,
+        append(Piece1,Piece2,Final),
+        delete(Final,white,F1),
+        delete(F1,white,F2),
+        is_set(F2).
 
 checkPosition(Board,X,Y):-
         index(Board,Y,X,Piece),
@@ -98,8 +101,8 @@ checkDiagonal(X1,X2,Y1,Y2):-
         A is X1abs - X2abs,
         abs(Y1,Y1abs), abs(Y2,Y2abs),
         B is Y1abs - Y2abs,
-        A == B.
-        
+        abs(A,Aabs),abs(B,Babs),
+        Aabs == Babs.
 
 checkDiagonalPositions(Board,X1,X2,Y1,Y2):-
         A is X2-X1,
@@ -109,7 +112,7 @@ checkDiagonalPositions(Board,X1,X2,Y1,Y2):-
         X is X1+Dx,
         Y is Y1+Dy,
         checkCell(Board, X,Y,Dx,Dy,X2).
-        
+
 checkCell(Board, X1,Y1,Dx,Dy,X2):-
         X1==X2,
         Top = _,
@@ -118,16 +121,16 @@ checkCell(Board, X1,Y1,Dx,Dy,X2):-
         \+(Top = x).
 
 checkCell(Board, X1,Y1,Dx,Dy,X2):-
-        Top = _, 
+        Top = _,
         index(Board,Y1,X1,Piece),
         nth0(0,Piece,Top),
         Top == x,
         X is X1+Dx,
         Y is Y1+Dy,
         checkCell(Board, X,Y,Dx,Dy,X2).
-        
-               
-        
+
+
+
 getInitialPos(X,Y):-
         nl,write(' Select initial position'),nl,
         write(' Column number '),
