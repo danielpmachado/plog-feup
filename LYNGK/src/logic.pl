@@ -76,7 +76,9 @@ updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer):-
 
 checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
         (
+
           checkTopPiece(Board,P2,X1,Y1), nl,write(' -> valid top piece color\n'),
+
           checkDiagonal(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
           checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
           checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
@@ -186,3 +188,58 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
             append(Player,[Color],NewPlayer),
             FinalColors= NewColors
           ).
+
+
+test(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        Y1 == 9,
+        Y is Y1+1.
+
+test(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        Y1 < 9,
+        forX1(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+        Y is Y1+1,
+        test(Complete,Board,P1,P2,X1,Y,X2,Y2,L,L1).
+
+
+forX1(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        X1 == 13,
+        X is X1+1.
+
+forX1(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        X1 < 13,
+        forY2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+        X is X1+1,
+        forX1(Complete,Board,P1,P2,X,Y1,X2,Y2,L,L1).
+
+
+
+forY2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        Y2 == 9,
+        Y is Y2+1.
+
+
+forY2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        Y2 < 9,
+        forX2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+        Y is Y2+1,
+        forY2(Complete,Board,P1,P2,X1,Y1,X2,Y,L,L1).
+
+
+forX2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        X2 == 13,
+        X is X2+1,
+        forX2(Complete,Board,P1,P2,X1,Y1,X,Y2,L,L1).
+
+
+forX2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        X2 < 13,
+        write(' X1-'),write(X1), write(' Y1-'),write(Y1),write(' X2-'),write(X2),write(' Y2-'),write(Y2),nl,
+        %checkMove(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+        X is X2+1,
+        forX2(Complete,Board,P1,P2,X1,Y1,X,Y2,L1,_).
+
+forX2(_,_,_,_,_,_,_,_,_,_).
+
+checkMove(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+        (checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2) ->  append([X1,Y1,X2,Y2],L,L1);
+         write('falhou')).

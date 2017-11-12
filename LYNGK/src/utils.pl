@@ -68,6 +68,7 @@ abs(X,Y):-
 abs(X,Y):-
     X >= 0,
     Y is X.
+   
 
 is_set(Lst) :-
     setof(X, member(X, Lst), Set),
