@@ -65,7 +65,8 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
 checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
         (
           checkTopPiece(Board,P2,X1,Y1), write(' -> valid top piece color\n'),
-          checkPosition(Board,X1,Y1),write(' -> valid intial position\n'),
+          checkPosition(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
+          checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
           checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
           checkFinalStack(Board,X1,Y1,X2,Y2), write(' -> valid final stack\n'),Complete is 1;
           nl,write(' || Invalid Move ||'),nl,nl,Complete is 0
@@ -82,6 +83,7 @@ checkFinalStack(Board,X1,Y1,X2,Y2):-
 checkPosition(Board,X,Y):-
         index(Board,Y,X,Piece),
         nth0(0,Piece,Top),
+        \+(Top = '.'),
         \+(Top = x).
 
 checkTopPiece(Board,P2,X,Y):-
@@ -89,6 +91,14 @@ checkTopPiece(Board,P2,X,Y):-
         nth0(0,Piece,Top),
         \+(member(Top,P2)),
         \+(Top = white).
+
+checkDiagonal(X1,X2,Y1,Y2):-
+        abs(X1,X1abs), abs(X2,X2abs),
+        A is X1abs - X2abs,
+        abs(Y1,Y1abs), abs(Y2,Y2abs),
+        B is Y1abs - Y2abs,
+        A == B.
+        
 
 getInitialPos(X,Y):-
         nl,write(' Select initial position'),nl,

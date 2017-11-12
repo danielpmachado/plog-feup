@@ -37,25 +37,35 @@ transform(X,Y):-
    ).
 
 
-   getColumnNumber(X) :-
+getColumnNumber(X) :-
            X = _,
            max = _,
            read(X),
            number(X),
            X > -1 , X < 13.
 
-   getColumnNumber(X) :-
+getColumnNumber(X) :-
            write('Please pick a number between 0 and 13...'),
            getColumnNumber(X).
 
 
-   getLineNumber(X) :-
+getLineNumber(X) :-
            X = _,
            max = _,
            read(X),
            number(X),
            X > -1 , X < 9.
 
-   getLineNumber(X) :-
+getLineNumber(X) :-
            write('Please pick a number between 0 and 9...'),
            getLineNumber(X).
+
+
+abs(X,Y):-
+    X < 0,
+    Y is -X.
+
+abs(X,Y):-
+    X >= 0,
+    Y is X.
+
