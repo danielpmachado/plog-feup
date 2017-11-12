@@ -66,6 +66,7 @@ checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
         (
           checkTopPiece(Board,P2,X1,Y1), write(' -> valid top piece color\n'),
           checkPosition(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
+          checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
           checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
           checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
           checkFinalStack(Board,X1,Y1,X2,Y2), write(' -> valid final stack\n'),Complete is 1;
@@ -100,6 +101,33 @@ checkDiagonal(X1,X2,Y1,Y2):-
         A == B.
         
 
+checkDiagonalPositions(Board,X1,X2,Y1,Y2):-
+        A is X2-X1,
+        B is Y2-Y1,
+        ( A >= 0 -> Dx is 1 ; Dx is -1 ),
+        ( B >= 0 -> Dy is 1 ; Dy is -1 ),
+        X is X1+Dx,
+        Y is Y1+Dy,
+        checkCell(Board, X,Y,Dx,Dy,X2).
+        
+checkCell(Board, X1,Y1,Dx,Dy,X2):-
+        X1==X2,
+        Top = _,
+        index(Board,Y1,X1,Piece),
+        nth0(0,Piece,Top),
+        \+(Top = x).
+
+checkCell(Board, X1,Y1,Dx,Dy,X2):-
+        Top = _, 
+        index(Board,Y1,X1,Piece),
+        nth0(0,Piece,Top),
+        Top == x,
+        X is X1+Dx,
+        Y is Y1+Dy,
+        checkCell(Board, X,Y,Dx,Dy,X2).
+        
+               
+        
 getInitialPos(X,Y):-
         nl,write(' Select initial position'),nl,
         write(' Column number '),
