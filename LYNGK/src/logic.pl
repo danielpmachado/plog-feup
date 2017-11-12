@@ -8,8 +8,8 @@ startHvH:-
         createBoard(B,RandomB),
         random(0,2,R),
         (
-          R = 0 -> play(RandomB,[1],[2],[ivory,blue,red,green,black]);
-          play(RandomB,[2],[1],[ivory,blue,red,green,black])
+          R = 0 -> play(RandomB,[0,1],[0,2],[ivory,blue,red,green,black]);
+          play(RandomB,[0,2],[0,1],[ivory,blue,red,green,black])
         ).
 
 
@@ -25,7 +25,8 @@ play(Board,Player1,Player2,Colors) :-
 turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
         clearScreen,
         printBoard(Board),nl,
-        printPlayersColors(Player1,Player2),
+        printPlayerInfo(Player1),
+        printPlayerInfo(Player2),
         printPlayer(Player1),
 
         makeMove(Complete,0,Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors).
@@ -36,19 +37,19 @@ makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         printMoveMenu,
         read(Option),
         (
-                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard),NewPlayer = P1,NewColors = Colors;
-                Option = 2 -> write(2), Complete is 1;
+                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer),B1=Board,NP1 =P1,NewColors = Colors;
+                Option = 2 -> NewBoard = Board, NewPlayer = P1, NewColors =Colors, Complete is 1;
                 Option = 3 -> Complete is 0,
-                              (Claimed \= 1  -> claimColor(Colors,NewColors,P1,NewPlayer), NewBoard = Board, Claimed1 is 1;
+                              (Claimed \= 1  -> claimColor(Colors,NewColors,P1,NP1), B1 = Board, Claimed1 is 1;
                               write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is Claimed);
                 Option = 4 -> halt;
 
                 write(' || Please choose a valid option. ||'),nl,nl,Complete is 0
         ),
-        (Complete \= 1 -> makeMove(Complete1,Claimed1,NewBoard,NewPlayer,P2,NewColors,NewBoard1,NewPlayer1,NewColors1); nl).
+        (Complete \= 1 -> makeMove(Complete1,Claimed1,B1,NP1,P2,NewColors,NewBoard,NewPlayer,NewColors); nl).
 
 
-normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
+normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer):-
         getInitialPos(X1,Y1),
         getFinalPos(X2,Y2),
         checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2),
@@ -56,9 +57,21 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
                           index(Board,Y1,X1,InitPos),
                           index(Board,Y2,X2,FinalPos),
                           append(InitPos,FinalPos,Final),
-                          setPosition(B, NewBoard, 0, 0, X2, Y2, Final);
-                          NewBoard = Board
+                          updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer);
+                          NewBoard = Board, NewPlayer =P1
                        ).
+
+updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer):-
+  length(Final,L),
+  nth0(0,Final,Top),
+  (
+    (L = 5, member(Top,P1))-> setPosition(B, NewBoard, 0, 0, X2, Y2, [x]),
+                             nth0(0,P1,Points,Rest),
+                             NewPoints is Points + 1,
+                             append([NewPoints],Rest,NewPlayer);
+                             setPosition(B, NewBoard, 0, 0, X2, Y2, Final),NewPlayer = P1
+  ).
+
 
 
 checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
@@ -81,7 +94,7 @@ checkNeutralTop(Board,P1,X1,Y1,X2,Y2):-
                                (is_list(Piece1) ->length(Piece1,L1);L1 is 1),
                                (is_list(Piece2) ->length(Piece2,L2);L2 is 1),
                                L2 =< L1;
-                               yes
+                               write('')
         ).
 
 checkFinalStack(Board,X1,Y1,X2,Y2):-

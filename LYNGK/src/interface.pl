@@ -89,10 +89,10 @@ printPlayer([H|T]) :-
 
 %%%%%%%%%%%%%%%%% Colors %%%%%%%%%%%%%%%%%%%
 
-printPlayersColors([H1|T1],[H2|T2]) :-
-        write(' Claimed Colors\n'),
-        write(' -> Player '), write(H1), write(': '), printList(T1), nl,
-        write(' -> Player '), write(H2), write(': '), printList(T2), nl.
+printPlayerInfo([H1|[H2|T1]]) :-
+        write(' -> Player '), write(H2), write(': '), nl,
+        write('      Points - '),write(H1),nl,
+        write('      Colors - '),printList(T1),nl.
 
 colorsMenu(Colors,Idx):-
         write(' Claim Color\n'),
@@ -115,7 +115,7 @@ printColorsMenu([],_).
 %%%%%%%%%%%%%%%%% Move Menu %%%%%%%%%%%%%%%%%%
 
 moveMenu(MoveType) :-
-      
+
         (
                 Option = 1 -> MoveType is 1;
                 Option = 2 -> MoveType is 2;
