@@ -68,4 +68,5 @@ abs(X,Y):-
 abs(X,Y):-
     X >= 0,
     Y is X.
+   
 
