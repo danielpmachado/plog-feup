@@ -36,72 +36,74 @@ makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         printMoveMenu,
         read(Option),
         (
-                Option = 1 -> write(1), normalMove(Complete,Board,P1,P2,Colors,NewBoard),NewPlayer = P1,NewColors =Colors, Complete is 1;
+                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard),NewPlayer = P1,NewColors = Colors;
                 Option = 2 -> write(2), Complete is 1;
                 Option = 3 -> Complete is 0,
                               (Claimed \= 1  -> claimColor(Colors,NewColors,P1,NewPlayer), NewBoard = Board, Claimed1 is 1;
                               write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is Claimed);
                 Option = 4 -> halt;
 
-                write(' || Please choose a valid option. ||\n'),Complete is 0
+                write(' || Please choose a valid option. ||'),nl,nl,Complete is 0
         ),
-        (Complete \= 1 -> makeMove(Complete1,Claimed1,Board,NewPlayer,P2,Colors,NewBoard,NewPlayer,NewColors); nl).
+        (Complete \= 1 -> makeMove(Complete1,Claimed1,NewBoard,NewPlayer,P2,NewColors,NewBoard1,NewPlayer1,NewColors1); nl).
 
 
 normalMove(Complete,Board,P1,P2,Colors,NewBoard):-
         getInitialPos(X1,Y1),
-        %checkValidMove(Complete,Board,P1,P2,X1,Y1),
-        getPosition(Board, 0, 0, X1, Y1, P),
-        setPosition(Board, Bt, 0, 0, X1, Y1, [x]),
-        write('piece - '), write(P),
-        movePiece(Bt,NewBoard,P),
-        printBoard(NewBoard).
+        getFinalPos(X2,Y2),
+        checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2),
+        (Complete = 1 ->  setPosition(Board, B, 0, 0, X1, Y1, [x]),
+                          index(Board,Y1,X1,InitPos),
+                          index(Board,Y2,X2,FinalPos),
+                          nth0(0,InitPos,Top),
+                          append(FinalPos,[Top],Final),
+                          setPosition(B, NewBoard, 0, 0, X2, Y2, Final);
+                          NewBoard = Board
+                       ).
 
 
-checkValidMove(Complete,B,P1,P2,X1,Y1):-
-        getPosition(B, 0, 0, X1, Y1, [H|T]),
-        ( member(P,P2) -> Complete is 0,
-                          write(' || You can not move '), write(P), write(' pieces || ');
-                          write('')).
+checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
+        (
+          checkTopPiece(Board,P2,X1,Y1), write(' -> valid top piece color\n'),
+          checkPosition(Board,X1,Y1),write(' -> valid intial position\n'),
+          checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
+          checkFinalStack(Board,X1,Y1,X2,Y2), write(' -> valid final stack\n'),Complete is 1;
+          nl,write(' || Invalid Move ||'),nl,nl,Complete is 0
+        ).
+
+checkFinalStack(Board,X1,Y1,X2,Y2):-
+        index(Board,Y1,X1,Piece1),
+        index(Board,Y2,X2,Piece2),
+        (is_list(Piece1) ->length(Piece1,L1);L1 is 1),
+        (is_list(Piece2) ->length(Piece2,L2);L2 is 1),
+        Total is L1 + L2,
+        Total =< 5.
+
+checkPosition(Board,X,Y):-
+        index(Board,Y,X,Piece),
+        nth0(0,Piece,Top),
+        \+(Top = x).
+
+checkTopPiece(Board,P2,X,Y):-
+        index(Board,Y,X,Piece),
+        nth0(0,Piece,Top),
+        \+(member(Top,P2)),
+        \+(Top = white).
 
 getInitialPos(X,Y):-
-        nl,write('   Select initial position'),nl,
-        write('   Column number '),
+        nl,write(' Select initial position'),nl,
+        write(' Column number '),
         getColumnNumber(X),
-        write('   Line number '),
+        write(' Line number '),
         getLineNumber(Y).
 
-
-movePiece(B,B2,Piece):-
-        nl,write('Select final position'),nl,
-        write('Column number : '),
+getFinalPos(X,Y):-
+        nl,write(' Select final position'),nl,
+        write(' Column number '),
         getColumnNumber(X),
-        write('Line number : '),
-        getLineNumber(Y),
-        setPosition(B, B2, 0, 0, X, Y, Piece).
+        write(' Line number '),
+        getLineNumber(Y).
 
-getColumnNumber(X) :-
-        X = _,
-        max = _,
-        read(X),
-        number(X),
-        X > -1 , X < 13.
-
-getColumnNumber(X) :-
-        write('Please pick a number between 0 and 13...'),
-        getColumnNumber(X).
-
-
-getLineNumber(X) :-
-        X = _,
-        max = _,
-        read(X),
-        number(X),
-        X > -1 , X < 9.
-
-getLineNumber(X) :-
-        write('Please pick a number between 0 and 9...'),
-        getLineNumber(X).
 
 claimColor(Colors,FinalColors,Player,NewPlayer):-
         	colorsMenu(Colors,Idx),

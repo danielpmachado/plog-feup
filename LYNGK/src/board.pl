@@ -127,21 +127,13 @@ printContent([],_,_).
 
 printContent([H|_],N,L):-
        N == L,
-       (
-        H = red -> write(e);
-        H = blue -> write(a);
-        H = black -> write(p);
-        H = white -> write(b);
-        H = green-> write(v);
-        H = ivory -> write(m);
-        H = x ->write(x);
-        write('.')
-        ).
+       transform(H,X),
+       write(X).
 
 
 printContent([H|T],N,L):-
         N1 is N+1,
-        write(H), write(' '),
+        transform(H,X), write(X), write(' '),
         printContent(T,N1,L).
 
 
@@ -228,18 +220,7 @@ setLinePosition([H | T], [H2 | T2], X, XLimit, Cell) :-
 
 setLinePosition(_, _, _, _, _).
 
-getPosition([H | T], _, Y, XLimit, YLimit, Cell) :-
-        Y == YLimit,
-        Y1 is Y + 1,
-        getLinePosition(H, 0, XLimit, Cell),
-        getPosition(T,0, Y1, XLimit, YLimit, Cell).
 
-getPosition([H | T], _, Y, XLimit, YLimit, Cell) :-
-        Y < 9,
-        Y1 is Y + 1,
-        getPosition(T, 0, Y1, XLimit, YLimit, Cell).
-
-getPosition(_, _, _, _, _, _).
 
 
 getLinePosition([H | T], X, XLimit, Cell) :-
