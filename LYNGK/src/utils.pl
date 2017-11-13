@@ -60,15 +60,8 @@ getLineNumber(X) :-
     write('Please pick a number between 0 and 9...'),
     getLineNumber(X).
 
-
 abs(X,Y):-
-    X < 0,
-    Y is -X.
-
-abs(X,Y):-
-    X >= 0,
-    Y is X.
-   
+    ( X >= 0 -> Y is X; Y is -X).
 
 is_set(Lst) :-
     setof(X, member(X, Lst), Set),

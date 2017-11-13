@@ -37,16 +37,73 @@ makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         printMoveMenu,
         read(Option),
         (
-                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer),B1=Board,NP1 =P1,NewColors = Colors;
-                Option = 2 -> NewBoard = Board, NewPlayer = P1, NewColors =Colors, Complete is 1;
+                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer),B1=Board,NP1 =P1, NC1 = Colors,Claimed1 is Claimed;
+                Option = 2 -> lyngkMove(Complete,Board,P1,NewBoard,NewPlayer),B1 = Board, NP1 = P1, NC1 = Colors,Claimed1 is Claimed;
                 Option = 3 -> Complete is 0,
-                              (Claimed \= 1  -> claimColor(Colors,NewColors,P1,NP1), B1 = Board, Claimed1 is 1;
-                              write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is Claimed);
+                              (Claimed \= 1  -> claimColor(Colors,NC1,P1,NP1), B1 = Board, Claimed1 is 1;
+                              write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is 1);
                 Option = 4 -> halt;
 
                 write(' || Please choose a valid option. ||'),nl,nl,Complete is 0
         ),
-        (Complete \= 1 -> makeMove(Complete1,Claimed1,B1,NP1,P2,NewColors,NewBoard,NewPlayer,NewColors); nl).
+        (Complete \= 1 -> makeMove(Complete1,Claimed1,B1,NP1,P2,NC1,NewBoard,NewPlayer,NewColors); nl).
+
+
+lyngkMove(Complete,Board,Player,NewBoard,NewPlayer):-
+        getInitialPos(X,Y),
+        index(Board,Y,X,Piece),
+        nth0(0,Piece,Top),
+        ( \+(member(Top,Player)) ->
+            nl,Complete is 0, write(' || Ivalid piece for LYNGK move ||\n');
+            lyngkMenu(Complete,Board,X,Y,X,Y,Player,NewBoard,NewPlayer)
+            ).
+
+lyngkMenu(Complete,Board,X0,Y0,X1,Y1,Player,NewBoard,NewPlayer):-
+          printLYNGKMenu,
+          read(Option),
+          (
+            Option = 1 -> intermediateMove(Board,Player,X1,Y1,X,Y,Valid),
+                          (Valid = 0 ->nl,write(' || Invalid Position ||\n'), lyngkMenu(Complete,Board,X0,Y0,X1,Y1,Player,NewBoard,NewPlayer);
+                            lyngkMenu(Complete,Board,X0,Y0,X,Y,Player,NewBoard,NewPlayer));
+            Option = 2 -> finalMove(Complete,Board,Player,X0,Y0,X1,Y1,NewBoard,NewPlayer);
+
+            write(' || Please choose a valid option. ||'),nl,nl,lyngkMenu(Complete,Board,X1,Y1,Player,NewBoard,NewPlayer)
+          ).
+
+finalMove(Complete,Board,P1,X0,Y0,X1,Y1,NewBoard,NewPlayer):-
+          getFinalPos(X2,Y2),
+          checkValidLYNGK(Complete,Board,P1,X0,Y0,X1,Y1,X2,Y2),
+          (Complete = 1 ->  setPosition(Board, B, 0, 0, X0, Y0, [x]),
+                            index(Board,Y0,X0,InitPos),
+                            index(Board,Y2,X2,FinalPos),
+                            append(InitPos,FinalPos,Final),
+                            updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer);
+                            write('')
+                         ).
+
+checkValidLYNGK(Complete,Board,P1,X0,Y0,X1,Y1,X2,Y2):-
+          (
+          checkPiece(Board,[],X0,Y0), nl,write(' -> valid piece\n'),
+          checkDiagonal(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
+          checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
+          checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
+          checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
+          checkFinalStack(Board,X0,Y0,X2,Y2), write(' -> valid final stack\n'),Complete is 1;
+          nl,write(' || Invalid Move ||'),nl,nl,Complete is 0).
+
+intermediateMove(Board,Player,X1,Y1,X2,Y2,Valid):-
+        nl,write(' Select Intermidiate position'),nl,
+        write(' Column number '),
+        getColumnNumber(X2),
+        write(' Line number '),
+        getLineNumber(Y2),
+        A is X1 - X2,
+        B is Y1 - Y2,
+        abs(A,Aabs), abs(B,Babs),
+        index(Board,Y2,X2,Piece),
+        nth0(0,Piece,Top),
+        (( Aabs==1,Babs ==1, member(Top,Player))->Valid is 1; Valid is 0).
+
 
 
 normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer):-
@@ -58,27 +115,25 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer):-
                           index(Board,Y2,X2,FinalPos),
                           append(InitPos,FinalPos,Final),
                           updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer);
-                          NewBoard = Board, NewPlayer =P1
+                          write('')
                        ).
 
 updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer):-
-  length(Final,L),
-  nth0(0,Final,Top),
-  (
-    (L = 5, member(Top,P1))-> setPosition(B, NewBoard, 0, 0, X2, Y2, [x]),
-                             nth0(0,P1,Points,Rest),
-                             NewPoints is Points + 1,
-                             append([NewPoints],Rest,NewPlayer);
-                             setPosition(B, NewBoard, 0, 0, X2, Y2, Final),NewPlayer = P1
-  ).
+          length(Final,L),
+          nth0(0,Final,Top),
+          (
+            (L = 5, member(Top,P1))-> setPosition(B, NewBoard, 0, 0, X2, Y2, [x]),
+                                     nth0(0,P1,Points,Rest),
+                                     NewPoints is Points + 1,
+                                     append([NewPoints],Rest,NewPlayer);
+                                     setPosition(B, NewBoard, 0, 0, X2, Y2, Final),NewPlayer = P1
+          ).
 
 
 
 checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
         (
-
-          checkTopPiece(Board,P2,X1,Y1), nl,write(' -> valid top piece color\n'),
-
+          checkPiece(Board,P2,X1,Y1), nl,write(' -> valid piece\n'),
           checkDiagonal(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
           checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
           checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
@@ -117,9 +172,11 @@ checkPosition(Board,X,Y):-
         \+(Top = '.'),
         \+(Top = x).
 
-checkTopPiece(Board,P2,X,Y):-
+checkPiece(Board,P2,X,Y):-
         index(Board,Y,X,Piece),
         nth0(0,Piece,Top),
+        length(Piece,L),
+        \+(L=5),
         \+(member(Top,P2)),
         \+(Top = white).
 
