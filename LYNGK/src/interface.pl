@@ -81,18 +81,18 @@ printInfoMenu :-
 
 %%%%%%%%%%%%%%%%% Players %%%%%%%%%%%%%%%%%%%
 
-printPlayer([H1|[H2|T1]]) :-
+printPlayer([H|T]) :-
         printLines(2),
         write('=================================================================\n'),
-        write('==                        PLAYER '),write(H2),write('`s turn                      ==\n'),
+        write('==                        PLAYER '),write(H),write('`s turn                      ==\n'),
         write('=================================================================\n').
 
 %%%%%%%%%%%%%%%%% Colors %%%%%%%%%%%%%%%%%%%
 
-printPlayerInfo([H1|[H2|T1]]) :-
-        write(' -> Player '), write(H2), write(': '), nl,
-        write('      Points - '),write(H1),nl,
-        write('      Colors - '),printList(T1),nl.
+printPlayersColors([H1|T1],[H2|T2]) :-
+        write(' Claimed Colors\n'),
+        write(' -> Player '), write(H1), write(': '), printList(T1), nl,
+        write(' -> Player '), write(H2), write(': '), printList(T2), nl.
 
 colorsMenu(Colors,Idx):-
         write(' Claim Color\n'),
@@ -115,7 +115,7 @@ printColorsMenu([],_).
 %%%%%%%%%%%%%%%%% Move Menu %%%%%%%%%%%%%%%%%%
 
 moveMenu(MoveType) :-
-
+      
         (
                 Option = 1 -> MoveType is 1;
                 Option = 2 -> MoveType is 2;
@@ -131,11 +131,3 @@ printMoveMenu :-
         write('   3 - Claim Color      \n'),
         write('   4 - Exit             \n'),
         write('                        \n').
-
-
-printLYNGKMenu :-
-        nl,
-        write(' Choose your move       \n'),
-        write('   1 - Intermidiate Move\n'),
-        write('   2 - Final Move       \n'),
-        nl.
