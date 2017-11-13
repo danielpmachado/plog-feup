@@ -143,6 +143,19 @@ checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
           nl,write(' || Invalid Move ||'),nl,nl,Complete is 0
         ).
 
+
+checkValidMove2(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
+        (
+          %checkTopPiece(Board,P2,X1,Y1),
+          %checkDiagonal(X1,X2,Y1,Y2),
+          %checkDiagonalPositions(Board,X1,X2,Y1,Y2),
+          checkPosition(Board,X1,Y1),
+          checkPosition(Board,X2,Y2),
+          % checkFinalStack(Board,X1,Y1,X2,Y2),
+          Complete is 1;
+          Complete is 0
+          ).
+
 checkNeutralTop(Board,P1,X1,Y1,X2,Y2):-
         index(Board,Y1,X1,Piece1),
         nth0(0,Piece1,Top),
@@ -247,56 +260,59 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
           ).
 
 
-test(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        Y1 == 9,
-        Y is Y1+1.
+          test(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  Y1 == 9,
+                  Y is Y1+1.
 
-test(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        Y1 < 9,
-        forX1(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-        Y is Y1+1,
-        test(Complete,Board,P1,P2,X1,Y,X2,Y2,L,L1).
-
-
-forX1(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        X1 == 13,
-        X is X1+1.
-
-forX1(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        X1 < 13,
-        forY2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-        X is X1+1,
-        forX1(Complete,Board,P1,P2,X,Y1,X2,Y2,L,L1).
+          test(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  Y1 < 9,
+                  forX1(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+                  Y is Y1+1,
+                  test(Board,P1,P2,X1,Y,X2,Y2,L,L1).
 
 
+          forX1(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  X1 == 13,
+                  X is X1+1.
 
-forY2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        Y2 == 9,
-        Y is Y2+1.
-
-
-forY2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        Y2 < 9,
-        forX2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-        Y is Y2+1,
-        forY2(Complete,Board,P1,P2,X1,Y1,X2,Y,L,L1).
+          forX1(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  X1 < 13,
+                  forY2(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+                  X is X1+1,
+                  forX1(Board,P1,P2,X,Y1,X2,Y2,L,L1).
 
 
-forX2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        X2 == 13,
-        X is X2+1,
-        forX2(Complete,Board,P1,P2,X1,Y1,X,Y2,L,L1).
+
+          forY2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  Y2 == 9,
+                  Y is Y2+1.
 
 
-forX2(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        X2 < 13,
-        write(' X1-'),write(X1), write(' Y1-'),write(Y1),write(' X2-'),write(X2),write(' Y2-'),write(Y2),nl,
-        %checkMove(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-        X is X2+1,
-        forX2(Complete,Board,P1,P2,X1,Y1,X,Y2,L1,_).
+          forY2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  Y2 < 9,
+                  forX2(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+                  Y is Y2+1,
+                  forY2(Board,P1,P2,X1,Y1,X2,Y,L,L1).
 
-forX2(_,_,_,_,_,_,_,_,_,_).
 
-checkMove(Complete,Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        (checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2) ->  append([X1,Y1,X2,Y2],L,L1);
-         write('falhou')).
+          forX2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  X2 == 13,
+                  X is X2+1,
+                  forX2(Board,P1,P2,X1,Y1,X,Y2,L,L1).
+
+
+          forX2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  X2 < 13,
+                  %write(' X1-'),write(X1), write(' Y1-'),write(Y1),write(' X2-'),write(X2),write(' Y2-'),write(Y2),nl,
+                  checkMove(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
+                  %write(' 2ndX1-'),write(X1), write(' Y1-'),write(Y1),write(' X2-'),write(X2),write(' Y2-'),write(Y2),nl,
+                  X is X2+1,
+                  forX2(Board,P1,P2,X1,Y1,X,Y2,L1,_).
+
+          forX2(_,_,_,_,_,_,_,_,_).
+
+          checkMove(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
+                  checkValidMove2(Complete1,Board,P1,P2,X1,Y1,X2,Y2),
+                  (Complete1 = 1 -> append([X1,Y1,X2,Y2],L,L1),
+                                   write('valid L1-'),write(L1);
+                                    write(' ')).
