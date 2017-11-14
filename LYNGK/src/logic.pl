@@ -29,8 +29,18 @@ play(Board,Player1,Player2,Colors) :-
         getValidMoves(FinalBoard,P1,P2,0,0,0,0,[],[],Moves3),
         length(Moves3,L3),
 
-        ( L2 =0,L3=0 -> write(' || Game Over ||\n');
+        ( L2 =0,L3=0 -> gameOver(P1,P2);
                         play(FinalBoard,P1,P2,FinalColors)).
+
+gameOver(P1,P2):-
+        nl,write('        || Game Over ||\n'),nl,
+        nth0(0,P1,Points1),
+        nth0(0,P2,Points2),
+        (
+          Points1 > Points2 -> write(' Player 1 Wins!\n');
+          Points1 < Points2 -> write(' Player 2 Wins!\n');
+          write(' It is a tie...')
+        ).
 
 
 turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
