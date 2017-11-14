@@ -28,6 +28,41 @@ startCvC:-
           R = 0 -> playCvC(RandomB,[0,1,C1,C2],[0,2,C3,C4]);
           playCvC(RandomB,[0,2,C1,C2],[0,1,C3,C4])
         ).
+		
+
+startPvC:-
+        board4(B),
+        createBoard(B,RandomB),
+        random(0,2,R),
+        
+        L1 = [ivory,blue,red,green,black],
+        
+        random_select(C1,L1,L2),
+        random_select(C2,L2,L3),
+      
+        (
+          R = 0 ->  playPvC(RandomB,[0,1],[0,2,C1,C2],L3);
+          playPvC(RandomB,[0,2],[0,1,C1,C2],L3)
+        ).
+		
+playPvC(Board,Player1,Player2,Colors) :-
+        getValidMoves(Board,Player1,Player2,0,0,0,0,[],[],Moves1),
+        length(Moves1,L1),
+        ( L1>0 -> turn(Board,Player1,Player2,Colors,NewBoard,P1,NewColors);
+                 write(' There are no possible moves\n'),P1=Player1, NewBoard = Board,NewColors=Colors),
+ 
+ 
+        getValidMoves(NewBoard,Player2,P1,0,0,0,0,[],[],Moves2),
+        length(Moves2,L2),
+        ( L2>0 -> turnCvC(NewBoard,Player2,P1,FinalBoard,P2);
+                 write(' There are no possible moves\n'),P2=Player2,FinalBoard=NewBoard),
+		FinalColors =NewColors,
+ 
+        getValidMoves(FinalBoard,P1,P2,0,0,0,0,[],[],Moves3),
+        length(Moves3,L3),
+ 
+        ( L2 =0,L3=0 -> gameOver(P1,P2);
+            playPvC(FinalBoard,P1,P2,FinalColors)).
 
 
 playCvC(Board,Player1,Player2) :-
@@ -73,8 +108,8 @@ gameOver(P1,P2):-
         nth0(0,P1,Points1),
         nth0(0,P2,Points2),
         (
-          Points1 > Points2 -> write(' Player 1 Wins!\n');
-          Points1 < Points2 -> write(' Player 2 Wins!\n');
+          (Points1 > Points2) -> write(' Player 1 Wins!\n');
+          (Points1 < Points2) -> write(' Player 2 Wins!\n');
           write(' It is a tie...')
         ).
 
@@ -114,8 +149,8 @@ makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         printMoveMenu,
         read(Option),
         (
-                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer),B1=Board,NP1 =P1, NC1 = Colors,Claimed1 is Claimed;
-                Option = 2 -> lyngkMove(Complete,Board,P1,NewBoard,NewPlayer),B1 = Board, NP1 = P1, NC1 = Colors,Claimed1 is Claimed;
+                Option = 1 -> normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors),B1=Board,NP1 =P1, NC1 = Colors,Claimed1 is Claimed;
+                Option = 2 -> lyngkMove(Complete,Board,Colors,P1,NewBoard,NewPlayer,NewColors),B1 = Board, NP1 = P1, NC1 = Colors,Claimed1 is Claimed;
                 Option = 3 -> Complete is 0,
                               (Claimed \= 1  -> claimColor(Colors,NC1,P1,NP1), B1 = Board, Claimed1 is 1;
                               write(' || You have already claimed a color this turn ||'),nl,nl, Claimed1 is 1);
@@ -126,13 +161,13 @@ makeMove(Complete,Claimed,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         (Complete \= 1 -> makeMove(Complete1,Claimed1,B1,NP1,P2,NC1,NewBoard,NewPlayer,NewColors); nl).
 
 
-lyngkMove(Complete,Board,Player,NewBoard,NewPlayer):-
+lyngkMove(Complete,Board,Colors,Player,NewBoard,NewPlayer,NewColors):-
         getInitialPos(X,Y),
         index(Board,Y,X,Piece),
         nth0(0,Piece,Top),
         ( \+(member(Top,Player)) ->
             nl,Complete is 0, write(' || Ivalid piece for LYNGK move ||\n');
-            lyngkMenu(Complete,Board,X,Y,X,Y,Player,NewBoard,NewPlayer)
+            lyngkMenu(Complete,Board,X,Y,X,Y,Player,NewBoard,NewPlayer), NewColors =Colors
             ).
 
 lyngkMenu(Complete,Board,X0,Y0,X1,Y1,Player,NewBoard,NewPlayer):-
@@ -191,7 +226,7 @@ normalMoveCvC(Board,P1,P2,X1,Y1,X2,Y2,NewBoard,NewPlayer):-
         updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer).
   
 
-normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer):-
+normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer,NewColors):-
         getInitialPos(X1,Y1),
         getFinalPos(X2,Y2),
         checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2),
@@ -199,8 +234,9 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer):-
                           index(Board,Y1,X1,InitPos),
                           index(Board,Y2,X2,FinalPos),
                           append(InitPos,FinalPos,Final),
-                          updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer);
-                          write('')
+                          updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer),
+						  NewColors =Colors;
+                          write(' || Invalid Move ||')
                        ).
 
 updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer):-
@@ -323,7 +359,7 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
 
           length(Player,Plength),
           (
-            Plength == 3 ->
+            Plength == 4 ->
             NewPlayer = Player,
             FinalColors =Colors,
             write('  || You can only claim 2 colors ||'),nl,nl;

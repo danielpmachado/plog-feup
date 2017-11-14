@@ -36,7 +36,7 @@ playMenu :-
         read(Option),
         (
                 Option = 1 -> startHvH;
-                Option = 2 -> playMenu;
+                Option = 2 -> startPvC;
                 Option = 3 -> startCvC;
                 Option = 4 -> mainMenu;
 
