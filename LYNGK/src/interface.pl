@@ -37,7 +37,7 @@ playMenu :-
         (
                 Option = 1 -> startHvH;
                 Option = 2 -> playMenu;
-                Option = 3 -> playMenu;
+                Option = 3 -> startCvC;
                 Option = 4 -> mainMenu;
 
                 playMenu
