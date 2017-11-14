@@ -4,8 +4,8 @@
 :-include('board.pl').
 
 startHvH:-
-        board5(RandomB),
-        %createBoard(B,RandomB),
+        board4(B),
+        (B,RandomB),
         random(0,2,R),
         (
           R = 0 -> play(RandomB,[0,1],[0,2],[ivory,blue,red,green,black]);
