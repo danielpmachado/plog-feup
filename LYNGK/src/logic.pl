@@ -4,8 +4,8 @@
 :-include('board.pl').
 
 startHvH:-
-        board4(B),
-        createBoard(B,RandomB),
+        board5(RandomB),
+        %createBoard(B,RandomB),
         random(0,2,R),
         (
           R = 0 -> play(RandomB,[0,1],[0,2],[ivory,blue,red,green,black]);
@@ -15,11 +15,22 @@ startHvH:-
 
 
 play(Board,Player1,Player2,Colors) :-
-        turn(Board,Player1,Player2,Colors,NewBoard,P1,NewColors),
-        %check end of game
-        turn(NewBoard,Player2,P1,NewColors,FinalBoard,P2,FinalColors),
-        %check end of game
-        play(FinalBoard,P1,P2,FinalColors).
+        getValidMoves(Board,Player1,Player2,0,0,0,0,[],[],Moves1),
+        length(Moves1,L1),
+        ( L1>0 -> turn(Board,Player1,Player2,Colors,NewBoard,P1,NewColors);
+                 write(' There are no possible moves\n'),P1=Player1, NewBoard = Board,NewColors=Colors),
+
+
+        getValidMoves(NewBoard,Player2,P1,0,0,0,0,[],[],Moves2),
+        length(Moves2,L2),
+        ( L2>0 -> turn(NewBoard,Player2,P1,NewColors,FinalBoard,P2,FinalColors);
+                 write(' There are no possible moves\n'),P2=Player2,FinalBoard=NewBoard,FinalColors=NewColors),
+
+        getValidMoves(FinalBoard,P1,P2,0,0,0,0,[],[],Moves3),
+        length(Moves3,L3),
+
+        ( L2 =0,L3=0 -> write(' || Game Over ||\n');
+                        play(FinalBoard,P1,P2,FinalColors)).
 
 
 turn(Board,Player1,Player2,Colors,NewBoard,NewPlayer,NewColors):-
@@ -115,7 +126,7 @@ normalMove(Complete,Board,P1,P2,Colors,NewBoard,NewPlayer):-
                           index(Board,Y2,X2,FinalPos),
                           append(InitPos,FinalPos,Final),
                           updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer);
-                          write('')
+                          write(' || Invalid Move ||')
                        ).
 
 updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer):-
@@ -133,28 +144,16 @@ updatePlayer(B,P1,Final,X2,Y2,NewBoard,NewPlayer):-
 
 checkValidMove(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
         (
-          checkPiece(Board,P2,X1,Y1), nl,write(' -> valid piece\n'),
-          checkDiagonal(X1,X2,Y1,Y2),write(' -> valid diagonal\n'),
-          checkDiagonalPositions(Board,X1,X2,Y1,Y2), write(' -> valid diagonal positions\n'),
-          checkPosition(Board,X1,Y1),write(' -> valid initial position\n'),
-          checkPosition(Board,X2,Y2),write(' -> valid final position\n'),
-          checkNeutralTop(Board,P1,X1,Y1,X2,Y2), write(' -> valid neutral move\n'),
-          checkFinalStack(Board,X1,Y1,X2,Y2), write(' -> valid final stack\n'),Complete is 1;
-          nl,write(' || Invalid Move ||'),nl,nl,Complete is 0
+          checkPiece(Board,P2,X1,Y1), %nl,write(' -> valid piece\n'),
+          checkDiagonal(X1,X2,Y1,Y2), %write(' -> valid diagonal\n'),
+          checkDiagonalPositions(Board,X1,X2,Y1,Y2), %write(' -> valid diagonal positions\n'),
+          checkPosition(Board,X1,Y1), %write(' -> valid initial position\n'),
+          checkPosition(Board,X2,Y2), %write(' -> valid final position\n'),
+          checkNeutralTop(Board,P1,X1,Y1,X2,Y2), %write(' -> valid neutral move\n'),
+          checkFinalStack(Board,X1,Y1,X2,Y2),Complete is 1; %write(' -> valid final stack\n')
+          Complete is 0
         ).
 
-
-checkValidMove2(Complete,Board,P1,P2,X1,Y1,X2,Y2):-
-        (
-          %checkTopPiece(Board,P2,X1,Y1),
-          %checkDiagonal(X1,X2,Y1,Y2),
-          %checkDiagonalPositions(Board,X1,X2,Y1,Y2),
-          checkPosition(Board,X1,Y1),
-          checkPosition(Board,X2,Y2),
-          % checkFinalStack(Board,X1,Y1,X2,Y2),
-          Complete is 1;
-          Complete is 0
-          ).
 
 checkNeutralTop(Board,P1,X1,Y1,X2,Y2):-
         index(Board,Y1,X1,Piece1),
@@ -262,34 +261,29 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
 
 
 getValidMoves(Board,P1,P2,X1,Y1,X2,Y2,ValidMoves,NewValidMoves,Final):-
-       
+
        (Y2 < 9 ->
-     
-              (X2< 13 ->   
-                            (Y1<9 -> (  
-                                        (X1 < 13 ->        
+
+              (X2< 13 ->
+                            (Y1<9 -> (
+                                        (X1 < 13 ->
                                                    checkMove(Board,P1,P2,X1,Y1,X2,Y2,ValidMoves,NewValidMoves),
                                                    Xn is X1+1,
                                                    ((Y2 =8, Xn =13)->  Final =NewValidMoves;
-                                                   test5(Board,P1,P2,Xn,Y1,X2,Y2,NewValidMoves,_,Final)); 
-                                                   
-                                                   (Xn is 0,Yn is Y1+1,test5(Board,P1,P2,Xn,Yn,X2,Y2,ValidMoves,NewValidMoves,Final))                       
+                                                   getValidMoves(Board,P1,P2,Xn,Y1,X2,Y2,NewValidMoves,_,Final));
+
+                                                   (Xn is 0,Yn is Y1+1,getValidMoves(Board,P1,P2,Xn,Yn,X2,Y2,ValidMoves,NewValidMoves,Final))
                                         )
                                    );
-                                  (Xn is 0, Yn is 0, X2n is X2+1,test5(Board,P1,P2,Xn,Yn,X2n,Y2,ValidMoves,NewValidMoves,Final))             
+                                  (Xn is 0, Yn is 0, X2n is X2+1,getValidMoves(Board,P1,P2,Xn,Yn,X2n,Y2,ValidMoves,NewValidMoves,Final))
                             );
-                            (Xn is 0, Yn is 0, X2n is 0, Y2n is Y2+1,test5(Board,P1,P2,Xn,Yn,X2n,Y2n,ValidMoves,NewValidMoves,Final)) 
+                            (Xn is 0, Yn is 0, X2n is 0, Y2n is Y2+1,getValidMoves(Board,P1,P2,Xn,Yn,X2n,Y2n,ValidMoves,NewValidMoves,Final))
               );
               write(NewValidMoves)
        ).
 
 checkMove(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        checkValidMove2(Complete1,Board,P1,P2,X1,Y1,X2,Y2),
-        (Complete1 = 1 ->  write('append'),
-                           append([[X1,Y1,X2,Y2]],L,L1),
-                           write('valid L1-'),write(L1),nl;
-                           L1=L      
+        checkValidMove(Complete1,Board,P1,P2,X1,Y1,X2,Y2),
+        (Complete1 = 1 ->  append([[X1,Y1,X2,Y2]],L,L1);
+                           L1=L
         ).
-                       
-                      
-  
