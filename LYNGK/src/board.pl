@@ -73,7 +73,7 @@ board5([
 
 printBoard(Board) :-
         nl,write('---------------------------------------------------------------------------------------------------------------------------------------------------------------'),nl,
-        printRowByRow(Board,0), nl,
+        printRowByRow(Board,0), nl,nl,
         write('---------------------------------------------------------------------------------------------------------------------------------------------------------------'),nl,
         write(' |     0     |     1     |     2     |     3     |     4     |     5     |     6     |     7     |     8     |     9     |    10     |    11     |    12     | '),
         printBlackLine.
@@ -85,9 +85,12 @@ printBlackLine :-
 
 printRowByRow([],9).
 printRowByRow([Line|Rest], N) :-
+      %  write(' | '),
+        write(' |           |           |           |           |           |           |           |           |           |           |           |           |           |'),nl,
+
         write(' | '),
         printSingleRow(Line, N),
-        N1 is N+1,
+              N1 is N+1,
         printRowByRow(Rest, N1).
 
 printSingleRow([Cell], N):-
@@ -95,7 +98,9 @@ printSingleRow([Cell], N):-
         write(' |      '),
         write(' | '),
         write(N),
-        write(' | '),
+        write(' | '),nl,
+        write(' |           |           |           |           |           |           |           |           |           |           |           |           |           |'),nl,
+
         printBlackLine.
 
 printSingleRow([Cell|More],N):-
