@@ -260,132 +260,36 @@ claimColor(Colors,FinalColors,Player,NewPlayer):-
           ).
 
 
-test2(X,Y):-
-        
-        (Y<9 -> (  
-                   (X < 13 -> X1 is X+1,test2(X1,Y), write('X:'), write(X), write(' Y:'), write(Y),nl; 
-                             (X1 is 0,Y1 is Y+1,test2(X1,Y1))                       
-                    )
-                 );
-                 true              
-        ).
 
-
-test3(X,Y,X2):-
-             
-      (X2< 13 ->   
-                    (Y<9 -> (  
-                                (X < 13 -> Xn is X+1,test3(Xn,Y,X2), write('X:'), write(X), write(' Y:'), write(Y), write('X2:'), write(X2), nl; 
-                                         (Xn is 0,Yn is Y+1,test3(Xn,Yn,X2))                       
-                                )
-                           );
-                          (Xn is 0, Yn is 0, X2n is X2+1,test3(Xn,Yn,X2n))             
-                    );
-                    true
-      ).
-
-test4(X,Y,X2,Y2):-
-             
-       (Y2 < 9 ->
-     
-              (X2< 13 ->   
-                            (Y<9 -> (  
-                                        (X < 13 -> Xn is X+1,test4(Xn,Y,X2,Y2),
-                                                   write('X:'), write(X), write(' Y:'), write(Y), write(' X2:'), write(X2), write(' Y2:'), write(Y2), nl; 
-                                                   (Xn is 0,Yn is Y+1,test4(Xn,Yn,X2,Y2))                       
-                                        )
-                                   );
-                                  (Xn is 0, Yn is 0, X2n is X2+1,test4(Xn,Yn,X2n,Y2))             
-                            );
-                            (Xn is 0, Yn is 0, X2n is 0, Y2n is Y2+1,test4(Xn,Yn,X2n,Y2n)) 
-              );
-              true
-       ).
-
-
-test5(Board,P1,P2,X1,Y1,X2,Y2,ValidMoves,NewValidMoves):-
-             
+getValidMoves(Board,P1,P2,X1,Y1,X2,Y2,ValidMoves,NewValidMoves,Final):-
+       
        (Y2 < 9 ->
      
               (X2< 13 ->   
                             (Y1<9 -> (  
-                                        (X1 < 13 -> Xn is X1+1,test5(Board,P1,P2,Xn,Y1,X2,Y2,ValidMoves,NewValidMoves),         
+                                        (X1 < 13 ->        
                                                    checkMove(Board,P1,P2,X1,Y1,X2,Y2,ValidMoves,NewValidMoves),
-                                                   write('L:'), write(ValidMoves), write('L1:'), write(NewValidMoves);
-                                                   (Xn is 0,Yn is Y1+1,test5(Board,P1,P2,Xn,Yn,X2,Y2,NewValidMoves,L))                       
+                                                   Xn is X1+1,
+                                                   ((Y2 =8, Xn =13)->  Final =NewValidMoves;
+                                                   test5(Board,P1,P2,Xn,Y1,X2,Y2,NewValidMoves,_,Final)); 
+                                                   
+                                                   (Xn is 0,Yn is Y1+1,test5(Board,P1,P2,Xn,Yn,X2,Y2,ValidMoves,NewValidMoves,Final))                       
                                         )
                                    );
-                                  (Xn is 0, Yn is 0, X2n is X2+1,test5(Board,P1,P2,Xn,Yn,X2n,Y2,ValidMoves,NewValidMoves))             
+                                  (Xn is 0, Yn is 0, X2n is X2+1,test5(Board,P1,P2,Xn,Yn,X2n,Y2,ValidMoves,NewValidMoves,Final))             
                             );
-                            (Xn is 0, Yn is 0, X2n is 0, Y2n is Y2+1,test5(Board,P1,P2,Xn,Yn,X2n,Y2n,ValidMoves,NewValidMoves)) 
+                            (Xn is 0, Yn is 0, X2n is 0, Y2n is Y2+1,test5(Board,P1,P2,Xn,Yn,X2n,Y2n,ValidMoves,NewValidMoves,Final)) 
               );
-              true
+              write(NewValidMoves)
        ).
-
-                       
-                      
-        
-
-test(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        Y1 == 9,
-        Y is Y1+1.
-
-test(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-         Y1 < 9,
-         forX1(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-         Y is Y1+1,
-         test(Board,P1,P2,X1,Y,X2,Y2,L,L1).
-
-
-forX1(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        X1 == 13,
-        X is X1+1.
-
-forX1(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-        X1 < 13,
-        forY2(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-        X is X1+1,
-        forX1(Board,P1,P2,X,Y1,X2,Y2,L,L1).
-
-
-
-forY2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-          Y2 == 9,
-          Y is Y2+1.
-
-
-forY2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-         Y2 < 9,
-         forX2(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-         Y is Y2+1,
-         write('X2:'),write(X2),
-         write('L_y2:'), write(L), write('L1_y2:'), write(L1),
-         write('y2'),
-         forY2(Board,P1,P2,X1,Y1,X2,Y,L1,L2).
-
-
-forX2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-       X2 == 13,
-       X is X2+1,
-       forX2(Board,P1,P2,X1,Y1,X,Y2,L1,L2).
-
-
-forX2(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
-         X2 < 13,
-         %write(' X1-'),write(X1), write(' Y1-'),write(Y1),write(' X2-'),write(X2),write(' Y2-'),write(Y2),nl,
-         checkMove(Board,P1,P2,X1,Y1,X2,Y2,L,L1),
-         write('L:'), write(L), write('L1:'), write(L1),
-         %write(' 2ndX1-'),write(X1), write(' Y1-'),write(Y1),write(' X2-'),write(X2),write(' Y2-'),write(Y2),nl,
-         X is X2+1,
-         forX2(Board,P1,P2,X1,Y1,X,Y2,L1,L2).
-
-forX2(_,_,_,_,_,_,_,_,_).
 
 checkMove(Board,P1,P2,X1,Y1,X2,Y2,L,L1):-
         checkValidMove2(Complete1,Board,P1,P2,X1,Y1,X2,Y2),
-        (Complete1 = 1 ->  append([X1,Y1,X2,Y2],L,L1),
-                           write('valid L1-'),write(L1);
-                           write(' '),
-                           append([],L,L1)
-        
+        (Complete1 = 1 ->  write('append'),
+                           append([[X1,Y1,X2,Y2]],L,L1),
+                           write('valid L1-'),write(L1),nl;
+                           L1=L      
         ).
+                       
+                      
+  
