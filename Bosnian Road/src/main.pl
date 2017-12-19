@@ -1,6 +1,7 @@
 :-use_module(library(lists)).
 
 :-include('utils.pl').
+:-include('solver.pl').
 
 board(Board):-
   Board = [
@@ -15,6 +16,5 @@ board(Board):-
 
 start(Board):-
   reset_timer,
-  %solve(Board,Solution),
-  print_board(Board),
+  solve(Board),
   print_time.
