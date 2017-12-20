@@ -12,8 +12,8 @@ print_time :-
 %%%%%%%%%%% BOARD %%%%%%%%%%%%%%
   print_board(Board) :-
           print_black_line,
-          print_row_by_row(Board),
-          print_black_line.
+          print_row_by_row(Board).
+          %print_black_line.
 
   print_black_line:-
           nl,
