@@ -1,161 +1,83 @@
 :-use_module(library(clpfd)).
 
-  % initialize_matrix(+Board, -ConstrainedBoard).
-initialize_matrix([], []).
-initialize_matrix([B | Bs], [S | Ss]):-
-    initialize_line(B, S),
-    initialize_matrix(Bs, Ss).
+  % initialize(+Board, -ConstrainedBoard).
+initialize([], []).
+initialize([B | Bs], [S | Ss]):-
+  B = '.',
+  S in (0..0) \/ (1..1),
+  initialize(Bs, Ss).
 
+initialize([B | Bs], [S | Ss]):-
+  S =B,
+  initialize(Bs, Ss).
 
-% initialize_line(+BoardLine, -ConstrainedLined).
-initialize_line([], []).
+get_element(Board,Idx,Element):-
+  nth1(Idx,Board,Element).
 
-initialize_line([E | Es], [S | Ss]):-
-  E = '.',
-  S in (0..0) \/(1..1),
-initialize_line(Es, Ss).
+get_element(_,Size,Idx,Inputs,Inputs):-
+  Idx > Size*Size.
 
-initialize_line([E | Es], [S | Ss]):-
-  S =E,
-initialize_line(Es, Ss).
+get_element(Board,Size, Idx, Inputs, [Element | Inputs]):-
+  nth1(Idx,Board,Element),
+  fd_var(Element).
+get_element(_, _,_, Inputs, Inputs).
 
-get_element(Board, X, Y, E):-
-  nth1(Y, Board, Row),
-  nth1(X, Row, E).
+get_all_adjacent(Board, Counter,Size, Adjacent):-
+  Y is Counter mod Size,
+  A1 is Counter-Size-1,
+  A2 is Counter-Size,
+  (Y = 0->A3 is -1;A3 is Counter-Size+1),
+  A4 is Counter-1,
+  (Y = 0->A5 is -1;A5 is Counter+1),
+  A6 is Counter+Size-1,
+  A7 is Counter+Size,
+  (Y = 0->A8 is -1;A8 is Counter+Size+1),
+  get_element(Board,Size,A1,[],T1),
+  get_element(Board,Size,A2,T1,T2),
+  get_element(Board,Size,A3,T2,T3),
+  get_element(Board,Size,A4,T3,T4),
+  get_element(Board,Size,A5,T4,T5),
+  get_element(Board,Size,A6,T5,T6),
+  get_element(Board,Size,A7,T6,T7),
+  get_element(Board,Size,A8,T7,Adjacent).
 
-get_element(Board, X, Y, Inputs, [Element | Inputs]):-
-  nth1(Y, Board, Row),
-  nth1(X, Row, Element).
-get_element(_, _, _, Inputs, Inputs).
+get_adjacent(Board, Counter,Size, Adjacent):-
+  A1 is Counter-Size,
+  A2 is Counter-1,
+  Y is Counter mod Size,
+  (Y = 0->A3 is -1;A3 is Counter+1),
+  A4 is Counter+Size,
+  get_element(Board,Size,A1,[],T1),
+  get_element(Board,Size,A2,T1,T2),
+  get_element(Board,Size,A3,T2,T3),
+  get_element(Board,Size,A4,T3,Adjacent).
 
+check_surrounded(Size,Board):-
+  check_surrounded(Size,Board,1).
 
-get_adjacent(Board, X, Y, Adjacent):-
-  XPlus1 is X + 1,
-  YPlus1 is Y + 1,
-  XMinus1 is X - 1,
-  YMinus1 is Y - 1,
-  get_element(Board, XPlus1, Y, [], Tmp1),
-  get_element(Board, X, YPlus1, Tmp1, Tmp2),
-  get_element(Board, XMinus1, Y, Tmp2, Tmp3),
-  get_element(Board, XMinus1, YMinus1, Tmp3, Tmp4),
-  get_element(Board, XMinus1, YPlus1, Tmp4, Tmp5),
-  get_element(Board, XPlus1, YMinus1, Tmp5, Tmp6),
-  get_element(Board, XPlus1, YPlus1,Tmp6, Tmp7),
-  get_element(Board, X, YMinus1, Tmp7, Adjacent).
-
-
-check_one(Board,X,Y):-
-  XPlus1 is X + 1,
-  YPlus1 is Y + 1,
-  get_element(Board, XPlus1,Y, Elem),
-  get_element(Board, X,YPLus1, Elem2),
-  Elem == 1, Elem2 == 1.
-
-
-check_one(Board,X,Y):-
-  XMinus1 is X - 1,
-  YMinus1 is Y - 1,
-  get_element(Board, XMinus1,Y, Elem),
-  get_element(Board, X,YMinus1, Elem2),
-  Elem == 1, Elem2 == 1.
-
-
-check_one(Board,X,Y):-
-  XPlus1 is X + 1,
-  YMinus1 is Y - 1,
-  get_element(Board, XPlus1,Y, Elem),
-  get_element(Board, X,YMinus1, Elem2),
-  Elem == 1, Elem2 == 1.
-
-
-check_one(Board,X,Y):-
-  YPlus1 is Y + 1,
-  XMinus1 is X - 1,
-  get_element(Board, XMinus1,Y, Elem),
-  get_element(Board, X,YPLus1, Elem2),
-  Elem == 1, Elem2 == 1.
-
-check_one(Board,X,Y):-
-  XPlus1 is X + 1,
-  XMinus1 is X - 1,
-  get_element(Board, XPlus1,Y, Elem),
-  get_element(Board, XMinus1,Y, Elem2),
-  Elem == 1, Elem2 == 1.
-
-check_one(Board,X,Y):-
-  YPlus1 is Y + 1,
-  YMinus1 is Y - 1,
-  get_element(Board, X,YMinus1, Elem),
-  get_element(Board, X,YPlus1, Elem2),
-  Elem == 1, Elem2 == 1.
-
-
-check_surrounded(Board,X,Y):-
-  get_element(Board,X,Y,E),
-  E =< 8,
-  E >=2,
-  get_adjacent(Board, X, Y, Adjacent),
+check_surrounded(Size,Board,Counter):-
+  Counter =< Size*Size,
+  get_element(Board,Counter,E),
+  \+fd_var(E),
+  get_all_adjacent(Board,Counter,Size,Adjacent),
   length(Adjacent,L),
-  L1 is L-E,
-  global_cardinality(Adjacent,[1-E,0-L1]).
-  %print_board(Board).
-check_surrounded(Board,X,Y).
+  number_zeros(L,E,Z),
+  global_cardinality(Adjacent,[1-E,0-Z]),
+  C is Counter+1,
+  check_surrounded(Size,Board,C).
 
-%check(+Size, +Board)
-check(Size, Board):-
-  check(Size, Board, 1, 1).
+check_surrounded(Size,Board,Counter):-
+  Counter =< Size*Size,
+  C is Counter+1,
+  check_surrounded(Size,Board,C).
 
-check(Size, Board, X, Y):-
-  X is Size + 1,
-  NextY is Y + 1,
-  check(Size, Board, 1, NextY).
-
-check(Size, _, _, Y):-
-  Y is Size + 1.
-
-check(Size, Board, X, Y):-
-  get_element(Board,X,Y,E),
-  var(E),
-  NextX is X + 1,
-  check(Size, Board, NextX, Y).
-
-check(Size, Board, X, Y):-
-  get_element(Board,X,Y,E),
-  nonvar(E),
-  check_surrounded(Board,X,Y),
-  NextX is X + 1,
-  check(Size, Board, NextX, Y).
-
-
-%checkSnake(+Size, +Board)
-checkSnake(Size, Board):-
-  checkSnake(Size, Board, 1, 1).
-
-checkSnake(Size, Board, X, Y):-
-  X is Size + 1,
-  NextY is Y + 1,
-  checkSnake(Size, Board, 1, NextY).
-
-checkSnake(Size, _, _, Y):-
-  Y is Size + 1.
-
-checkSnake(Size, Board, X, Y):-
-  get_element(Board,X,Y,E),
-  E \== 1,
-  NextX is X + 1,
-  checkSnake(Size, Board, NextX, Y).
-
-checkSnake(Size, Board, X, Y):-
-  get_element(Board,X,Y,E),
-  E == 1,
-  check_one(Board,X,Y),
-  NextX is X + 1,
-  checkSnake(Size, Board, NextX, Y).
+check_surrounded(Size,Board,Counter).
 
 
 solve(Board):-
-  initialize_matrix(Board, Solution),
-  check(6,Solution),
+  initialize(Board, Solution),
+  check_surrounded(6,Solution),
+  print_board(Solution,6),
 /*  maplist(checkSnake(6,Solution),Solution2),*/
-  maplist(labeling([]), Solution),
-  print_board(Solution).
+  labeling([], Solution),
+  print_board(Solution,6).
