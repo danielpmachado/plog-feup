@@ -44,6 +44,52 @@ get_adjacent(Board, X, Y, Adjacent):-
   get_element(Board, X, YMinus1, Tmp7, Adjacent).
 
 
+check_one(Board,X,Y):-
+  XPlus1 is X + 1,
+  YPlus1 is Y + 1,
+  get_element(Board, XPlus1,Y, Elem),
+  get_element(Board, X,YPLus1, Elem2),
+  Elem == 1, Elem2 == 1.
+
+
+check_one(Board,X,Y):-
+  XMinus1 is X - 1,
+  YMinus1 is Y - 1,
+  get_element(Board, XMinus1,Y, Elem),
+  get_element(Board, X,YMinus1, Elem2),
+  Elem == 1, Elem2 == 1.
+
+
+check_one(Board,X,Y):-
+  XPlus1 is X + 1,
+  YMinus1 is Y - 1,
+  get_element(Board, XPlus1,Y, Elem),
+  get_element(Board, X,YMinus1, Elem2),
+  Elem == 1, Elem2 == 1.
+
+
+check_one(Board,X,Y):-
+  YPlus1 is Y + 1,
+  XMinus1 is X - 1,
+  get_element(Board, XMinus1,Y, Elem),
+  get_element(Board, X,YPLus1, Elem2),
+  Elem == 1, Elem2 == 1.
+
+check_one(Board,X,Y):-
+  XPlus1 is X + 1,
+  XMinus1 is X - 1,
+  get_element(Board, XPlus1,Y, Elem),
+  get_element(Board, XMinus1,Y, Elem2),
+  Elem == 1, Elem2 == 1.
+
+check_one(Board,X,Y):-
+  YPlus1 is Y + 1,
+  YMinus1 is Y - 1,
+  get_element(Board, X,YMinus1, Elem),
+  get_element(Board, X,YPlus1, Elem2),
+  Elem == 1, Elem2 == 1.
+
+
 check_surrounded(Board,X,Y):-
   get_element(Board,X,Y,E),
   E =< 8,
@@ -81,8 +127,35 @@ check(Size, Board, X, Y):-
   check(Size, Board, NextX, Y).
 
 
+%checkSnake(+Size, +Board)
+checkSnake(Size, Board):-
+  checkSnake(Size, Board, 1, 1).
+
+checkSnake(Size, Board, X, Y):-
+  X is Size + 1,
+  NextY is Y + 1,
+  checkSnake(Size, Board, 1, NextY).
+
+checkSnake(Size, _, _, Y):-
+  Y is Size + 1.
+
+checkSnake(Size, Board, X, Y):-
+  get_element(Board,X,Y,E),
+  E \== 1,
+  NextX is X + 1,
+  checkSnake(Size, Board, NextX, Y).
+
+checkSnake(Size, Board, X, Y):-
+  get_element(Board,X,Y,E),
+  E == 1,
+  check_one(Board,X,Y),
+  NextX is X + 1,
+  checkSnake(Size, Board, NextX, Y).
+
+
 solve(Board):-
   initialize_matrix(Board, Solution),
   check(6,Solution),
+/*  maplist(checkSnake(6,Solution),Solution2),*/
   maplist(labeling([]), Solution),
   print_board(Solution).
