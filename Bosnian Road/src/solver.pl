@@ -1,9 +1,9 @@
 :-use_module(library(clpfd)).
 
-  % initialize(+Board, -ConstrainedBoard).
+
 initialize([], []).
 initialize([B | Bs], [S | Ss]):-
-  B = '.',
+  B ='.',
   S in (0..0) \/ (1..1),
   initialize(Bs, Ss).
 
@@ -11,17 +11,17 @@ initialize([B | Bs], [S | Ss]):-
   S =B,
   initialize(Bs, Ss).
 
+
 get_element(Board,Idx,Element):-
   nth1(Idx,Board,Element).
 get_element(Board,Idx,-1).
-
 
 get_element(Board, Idx, Inputs, [Element | Inputs]):-
   nth1(Idx,Board,Element),
   Element #<2.
 get_element(_, _, Inputs, Inputs).
 
-get_all_adjacent(Board, Counter,Size, Adjacent):-
+get_adjacent(Board, Counter,Size, Adjacent):-
   Y is Counter mod Size,
   A1 is Counter-Size-1,
   A2 is Counter-Size,
@@ -41,9 +41,9 @@ get_all_adjacent(Board, Counter,Size, Adjacent):-
   get_element(Board,A8,T7,Adjacent).
 
 
-
 check_closed(Board,Size,Counter):-
   get_element(Board,Counter,Element),
+  fd_var(Element),
   Y is Counter mod Size,
   Z is Counter mod Size,
   A1 is Counter-Size,
@@ -64,38 +64,34 @@ check_closed(Board,Size,Counter):-
   Element #=0.
 check_closed(Board,Size,Counter).
 
-
-
-
-check_surrounded(Size,Board):-
-  check_surrounded(Size,Board,1).
-
-
-check_surrounded(Size,Board,Counter):-
-  Counter =< Size*Size,
+check_surrounded(Board,Size,Counter):-
   get_element(Board,Counter,E),
   \+fd_var(E),
   E #>=2,
-  get_all_adjacent(Board,Counter,Size,Adjacent),
+  get_adjacent(Board,Counter,Size,Adjacent),
   length(Adjacent,L),
   number_zeros(L,E,Z),
-  global_cardinality(Adjacent,[1-E,0-Z]),
-  C is Counter+1,
-  check_surrounded(Size,Board,C).
+  global_cardinality(Adjacent,[1-E,0-Z]).
 
-check_surrounded(Size,Board,Counter):-
+
+
+restrict(Board,Size,Counter):-
+  Counter =< Size*Size,
+  check_surrounded(Board,Size,Counter),
+  C is Counter+1,
+  restrict(Board,Size,C).
+
+restrict(Board,Size,Counter):-
   Counter =< Size*Size,
   check_closed(Board,Size,Counter),
   C is Counter+1,
-  check_surrounded(Size,Board,C).
+  restrict(Board,Size,C).
 
-check_surrounded(Size,Board,Counter).
+restrict(Board,Size,Counter).
 
 
-
-solve(Board):-
+solve(Board,Size):-
   initialize(Board, Solution),
-  check_surrounded(6,Solution),
-/*  maplist(checkSnake(6,Solution),Solution2),*/
+  restrict(Solution,Size,1),
   labeling([], Solution),
-  print_board(Solution,6).
+  print_board(Solution,Size).
