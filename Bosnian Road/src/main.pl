@@ -2,35 +2,29 @@
 
 :-include('utils.pl').
 :-include('solver.pl').
+:-include('interface.pl').
 
+start:-
+  clear_screen,
+  print_menu,
+  read(Option),get_char(_),
+  menu(Option).
 
-board(Board):-
-  Board = [
-      .,.,.,.,.,.,
-      .,5,.,.,5,.,
-      .,.,3,.,.,.,
-      .,.,.,.,.,.,
-      .,3,.,.,.,.,
-      .,.,.,.,.,2
-      ].
+menu(1):-
+  clear_screen,
+  print_board_menu,
+  read(Option),get_char(_),
+  board_menu(Option).
 
-/*
-board(Board):-
-  Board = [
-      .,.,.,.,.,.,.,.,.,.,
-      .,.,.,.,.,.,7,.,.,.,
-      .,6,.,.,.,.,.,.,.,.,
-      .,.,.,.,.,.,7,.,.,.,
-      .,.,.,3,.,.,.,.,.,.,
-      .,.,.,.,.,.,6,.,.,.,
-      .,.,.,5,.,.,.,.,.,.,
-      .,.,.,.,.,.,.,.,.,.,
-      .,.,.,7,.,.,.,.,.,.,
-      .,.,.,.,.,.,.,.,5,.
-          ].
-*/
+menu(3):-
+  abort.
 
-start(Board,Size):-
+menu(_):-
+  false.
+
+board_menu(B):-
+  clear_screen,
+  board(B,Board,Size),
   reset_timer,
   solve(Board,Size),
   print_time.

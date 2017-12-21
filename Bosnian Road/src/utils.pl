@@ -1,5 +1,6 @@
 :- use_module(library(clpfd)).
 
+
 %%%%%%%%%%% STATISTICS %%%%%%%%%%%%%%
 reset_timer :- statistics(walltime,_).
 
@@ -11,22 +12,55 @@ print_time :-
 
 %%%%%%%%%%% BOARD %%%%%%%%%%%%%%
 
-print_board(Board,Size) :-
-	Total is Size*Size,
-  print_row_by_row(Board,Size,Total).
+board(1,Board,6):-
+  Board = [
+      .,.,.,.,.,.,
+      .,5,.,.,5,.,
+      .,.,3,.,.,.,
+      .,.,.,.,.,.,
+      .,3,.,.,.,.,
+      .,.,.,.,.,2
+      ].
 
-print_row_by_row(_,_,0).
-print_row_by_row(Board,Size,Total):-
-	print_line(Board,Size,Rest),nl,
-	T is Total-Size,
-	print_row_by_row(Rest,Size,T).
+board(2,Board,8):-
+		Board = [
+			 .,.,.,.,.,.,.,.,
+			 .,7,.,4,.,3,.,.,
+			 .,.,.,.,.,.,.,.,
+			 .,6,.,.,.,.,.,.,
+			 .,.,.,.,.,.,.,.,
+			 .,.,.,.,.,.,.,.,
+			 .,.,.,.,.,.,4,.,
+			 .,.,.,.,.,.,.,'.'
+			      ].
 
-print_line(T,0,T).
-print_line([H|T],Size,Rest):-
-	write(H), write(' '),
-	S is Size-1,
-	print_line(T,S,Rest).
+board(3,Board,10):-
+  Board = [
+			 .,.,.,.,.,.,.,.,.,2,
+			 .,6,.,.,.,.,.,.,.,.,
+			 .,.,.,.,.,.,5,.,.,.,
+			 .,.,.,.,.,.,.,.,.,.,
+			 .,.,.,.,.,.,.,.,6,.,
+			 .,6,.,.,.,.,.,.,.,.,
+			 .,.,.,.,.,.,4,.,.,.,
+			 .,.,.,4,.,.,.,.,.,.,
+			 .,.,.,.,.,.,.,.,7,.,
+			 .,.,.,.,.,5,.,.,.,'.'
+			          ].
 
+board(_,_,_):-false.
+
+
+%%%%%%%%%%% OTHERS %%%%%%%%%%%%%%
+clear_screen :-
+  printLines(65).
+
+printLines(N) :-
+	N > 0,
+	nl,
+	N1 is N - 1,
+	printLines(N1).
+printLines(_).
 
 number_zeros(L,N,Z):-
 	L1 is L-N,
