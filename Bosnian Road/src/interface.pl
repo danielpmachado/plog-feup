@@ -1,4 +1,15 @@
 
+clear_screen :-
+  printLines(65).
+
+printLines(N) :-
+	N > 0,
+	nl,
+	N1 is N - 1,
+	printLines(N1).
+printLines(_).
+
+
 print_menu :-
   write('========================================\n'),
   write('==           Bosnian Road             ==\n'),
@@ -21,6 +32,18 @@ print_board_menu :-
   write('==          2 - Board 2 (6x6)         ==\n'),
   write('==          3 - Board 3 (8x8)         ==\n'),
   write('==          4 - Board 4 (10x10)       ==\n'),
+  write('==                                    ==\n'),
+  write('========================================\n').
+
+print_size_menu :-
+  write('========================================\n'),
+  write('==      Bosnian Road - Board Size     ==\n'),
+  write('========================================\n'),
+  write('==                                    ==\n'),
+  write('==             1 - 5x5                ==\n'),
+  write('==             2 - 6x6                ==\n'),
+  write('==             3 - 7x7                ==\n'),
+  write('==             4 - 8x8                ==\n'),
   write('==                                    ==\n'),
   write('========================================\n').
 

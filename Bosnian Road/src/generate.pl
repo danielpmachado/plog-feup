@@ -1,58 +1,28 @@
 :-use_module(library(clpfd)).
 :-use_module(library(random)).
-:-use_module(library(lists)).
 
-:-include('solver.pl').
-
-generate_random_element(_, []).
-generate_random_element(Size, [Element | Rest]):-
-  random(0, 2, Domain),
-  Element is Domain,
-  generate_random_element(Size, Rest).
-
-
-generate_random_board(_, []).
-generate_random_board(Size, [Row | Rows]):-
-  length(Row, Size),
-  generate_random_element(Size, Row),
-/* NumColNext is NumCol + 1,
-  Size > NumColNext,*/
-  generate_random_board(Size, Rows).
-
-
-generate_board(_, [], []).
-generate_board(Size, [RLine | RRest], [Line | Rest]):-
-  length(Line, Size),
-  generate_line(Size, RLine, RLine, Line),
-  generate_board(Size, RRest, Rest).
-
-
-generate_line(_, _, [], []).
-generate_line(Size, RLine, [R | Rs], [S | Ss]):-
-  /*random(Probability),
-  Probability < 0.2,*/
-  /*random(0, Size, Position),
-  nth0(Position, RLine, Equal),
-  Equal \= R,
-  S #= Equal,*/
-  random(0,2,D),
-  S #= D,
-  generate_line(Size, RLine, Rs, Ss).
-
-generate_line(Size, RLine, [R | Rs], [S | Ss]):-
-  S #= R,
-  generate_line(Size, RLine, Rs, Ss).
+random_numbers([],0).
+random_numbers([H|T],N):-
+  random(1,8,H),
+  N1 is N-1,
+  random_numbers(T,N1).
 
 
 
-%generate main
-generate(Size, Board):-
-  length(RandomBoard, Size),
-  generate_random_board(Size, RandomBoard),
+generate(Option,Board,Size):-
+  Option >0,
+  Option <5,
+  Size is Option+3,
+  Total is Size*Size,
+  N is floor(Size*0.7),
+  Z is Total-N,
+  length(Zeros,Z),
+  domain(Zeros,0,0),
+  labeling([],Zeros),
+  random_numbers(Numbers,N),
+  append(Zeros,Numbers,Tmp),
+  random_permutation(Tmp,Board).
 
-  length(Board, Size),
-  generate_board(Size, RandomBoard, Board).
-/*
-  checkSnake(Size,Board),
-
-  maplist(labeling([]), Board).*/
+generate(_,_,_):-
+  clear_screen,
+  false.

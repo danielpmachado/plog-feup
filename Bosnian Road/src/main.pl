@@ -1,8 +1,9 @@
 :-use_module(library(lists)).
 
 :-include('utils.pl').
-:-include('solver.pl').
+:-include('solve.pl').
 :-include('interface.pl').
+:-include('generate.pl').
 
 start:-
   clear_screen,
@@ -15,6 +16,27 @@ menu(1):-
   print_board_menu,
   read(Option),get_char(_),
   board_menu(Option).
+
+menu(2):-
+  clear_screen,
+  print_size_menu,
+  read(Option),get_char(_),
+  generate(Option,Board,Size),
+  clear_screen,
+  print_board(Board,Size).
+
+menu(3):-
+  clear_screen,
+  print_size_menu,
+  read(Option),get_char(_),
+  generate(Option,Board,Size),
+  init_stats,
+  solve(Board,Size,Solution),
+  print_time,
+  print_stats,
+  clear_screen,
+  arrange_board(Solution,Printable),
+  print_board(Printable,Size).
 
 menu(4):-
   abort.

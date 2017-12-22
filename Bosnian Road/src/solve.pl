@@ -3,7 +3,7 @@
 
 initialize([], []).
 initialize([B | Bs], [S | Ss]):-
-  B ='.',
+  B =0,
   S in (0..0) \/ (11..11),
   initialize(Bs, Ss).
 
@@ -18,7 +18,7 @@ get_element(Board,Idx,-1).
 
 get_element(Board, Idx, Inputs, [Element | Inputs]):-
   nth1(Idx,Board,Element).
-get_element(_, _, Inputs, [0|Inputs]).
+get_element(_, _, Inputs, Inputs).
 
 get_rigth(Counter,Size,R,0):-  R is -1.
 get_rigth(Counter,Size,R,_):-  R is Counter + 1.
@@ -90,8 +90,7 @@ check_surrounded(Board,Size,Counter):-
   \+fd_var(E),
   E >=2,
   get_adjacent(Board,Counter,Size,Adjacent),
-  Z is 8-E,
-  global_cardinality(Adjacent,[11-E,0-Z]).
+  exactly(11,Adjacent,E).
 
 
 restrict(Board,Size,Counter):-
@@ -112,4 +111,4 @@ restrict(Board,Size,Counter).
 solve(Board,Size,Solution):-
   initialize(Board, Solution),
   restrict(Solution,Size,1),
-  labeling([], Solution).
+  labeling([ff,bisect,down], Solution).
