@@ -5,8 +5,9 @@ print_menu :-
   write('========================================\n'),
   write('==                                    ==\n'),
   write('==          1 - Solve                 ==\n'),
-  write('==          2 - Generate & Solve      ==\n'),
-  write('==          3 - Exit                  ==\n'),
+  write('==          2 - Generate              ==\n'),
+  write('==          3 - Generate & Solve      ==\n'),
+  write('==          4 - Exit                  ==\n'),
   write('==                                    ==\n'),
   write('========================================\n').
 
@@ -16,9 +17,10 @@ print_board_menu :-
   write('==   Bosnian Road - Choose the Board  ==\n'),
   write('========================================\n'),
   write('==                                    ==\n'),
-  write('==          1 - Board 1 (6x6)         ==\n'),
-  write('==          2 - Board 2 (8x8)         ==\n'),
-  write('==          3 - Board 3 (10x10)       ==\n'),
+  write('==          1 - Board 1 (4x4)         ==\n'),
+  write('==          2 - Board 2 (6x6)         ==\n'),
+  write('==          3 - Board 3 (8x8)         ==\n'),
+  write('==          4 - Board 4 (10x10)       ==\n'),
   write('==                                    ==\n'),
   write('========================================\n').
 
@@ -37,3 +39,24 @@ print_line([H|T],Size,Rest):-
   write(H), write(' '),
   S is Size-1,
   print_line(T,S,Rest).
+
+print_time:-
+  statistics(runtime,[_,T]),
+	TS is ((T//10)*10)/1000,
+  nl, nl,
+  write('========= Statistics ========='), nl,
+	nl, write('Time: '), write(TS), write('s'),nl.
+
+
+
+print_stats:-
+  fd_statistics(resumptions, Resumptions),
+  fd_statistics(entailments, Entailments),
+  fd_statistics(prunings, Prunings),
+  fd_statistics(backtracks, Backtracks),
+  fd_statistics(constraints, Constraints),
+  write('Resumptions: '), write(Resumptions), nl,
+  write('Entailments: '), write(Entailments), nl,
+  write('Prunings: '), write(Prunings), nl,
+  write('Backtracks: '), write(Backtracks), nl,
+  write('Constraints: '), write(Constraints), nl.

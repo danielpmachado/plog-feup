@@ -16,7 +16,7 @@ menu(1):-
   read(Option),get_char(_),
   board_menu(Option).
 
-menu(3):-
+menu(4):-
   abort.
 
 menu(_):-
@@ -25,6 +25,7 @@ menu(_):-
 board_menu(B):-
   clear_screen,
   board(B,Board,Size),
-  reset_timer,
+  init_stats,
   solve(Board,Size),
-  print_time.
+  print_time,
+  print_stats.

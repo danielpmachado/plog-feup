@@ -1,28 +1,31 @@
 :- use_module(library(clpfd)).
 
 
-%%%%%%%%%%% STATISTICS %%%%%%%%%%%%%%
-reset_timer :- statistics(walltime,_).
-
-print_time :-
-	statistics(walltime,[_,T]),
-	TS is ((T//10)*10)/1000,
-	nl, write('Time: '), write(TS), write('s'), nl, nl.
+init_stats :-
+ statistics(runtime,_).
 
 
-%%%%%%%%%%% BOARD %%%%%%%%%%%%%%
 
-board(1,Board,6):-
+board(1,Board,4):-
+	Board = [
+		.,.,.,3,
+		.,.,.,.,
+		.,3,.,.,
+		.,.,.,'.'
+		 ].
+
+
+board(2,Board,6):-
   Board = [
       .,.,.,.,.,.,
       .,5,.,.,5,.,
-      .,.,3,.,.,.,
+      .,.,3,2,.,.,
       .,.,.,.,.,.,
       .,3,.,.,.,.,
       .,.,.,.,.,2
       ].
 
-board(2,Board,8):-
+board(3,Board,8):-
 		Board = [
 			 .,.,.,.,.,.,.,.,
 			 .,7,.,4,.,3,.,.,
@@ -34,7 +37,7 @@ board(2,Board,8):-
 			 .,.,.,.,.,.,.,'.'
 			      ].
 
-board(3,Board,10):-
+board(4,Board,10):-
   Board = [
 			 .,.,.,.,.,.,.,.,.,2,
 			 .,6,.,.,.,.,.,.,.,.,
@@ -48,10 +51,10 @@ board(3,Board,10):-
 			 .,.,.,.,.,5,.,.,.,'.'
 			          ].
 
+
 board(_,_,_):-false.
 
 
-%%%%%%%%%%% OTHERS %%%%%%%%%%%%%%
 clear_screen :-
   printLines(65).
 
