@@ -26,6 +26,8 @@ board_menu(B):-
   clear_screen,
   board(B,Board,Size),
   init_stats,
-  solve(Board,Size),
+  solve(Board,Size,Solution),
   print_time,
-  print_stats.
+  print_stats,
+  arrange_board(Solution,Printable),
+  print_board(Printable,Size).

@@ -24,8 +24,10 @@ print_board_menu :-
   write('==                                    ==\n'),
   write('========================================\n').
 
+
+
 print_board(Board,Size) :-
-  Total is Size*Size,
+  Total is Size*Size,nl,
   print_row_by_row(Board,Size,Total).
 
 print_row_by_row(_,_,0).
@@ -40,13 +42,22 @@ print_line([H|T],Size,Rest):-
   S is Size-1,
   print_line(T,S,Rest).
 
+arrange_board([],[]).
+arrange_board([O|Os],[N|Ns]):-
+  O = 11,
+  N = 'X',
+  arrange_board(Os,Ns).
+
+arrange_board([O|Os],[N|Ns]):-
+  N = O,
+  arrange_board(Os,Ns).
+
 print_time:-
   statistics(runtime,[_,T]),
 	TS is ((T//10)*10)/1000,
   nl, nl,
   write('========= Statistics ========='), nl,
 	nl, write('Time: '), write(TS), write('s'),nl.
-
 
 
 print_stats:-

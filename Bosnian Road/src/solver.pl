@@ -4,7 +4,7 @@
 initialize([], []).
 initialize([B | Bs], [S | Ss]):-
   B ='.',
-  S in (0..0) \/ (1..1),
+  S in (0..0) \/ (11..11),
   initialize(Bs, Ss).
 
 initialize([B | Bs], [S | Ss]):-
@@ -17,62 +17,81 @@ get_element(Board,Idx,Element):-
 get_element(Board,Idx,-1).
 
 get_element(Board, Idx, Inputs, [Element | Inputs]):-
-  nth1(Idx,Board,Element),
-  Element #<2.
-get_element(_, _, Inputs, Inputs).
+  nth1(Idx,Board,Element).
+get_element(_, _, Inputs, [0|Inputs]).
+
+get_rigth(Counter,Size,R,0):-  R is -1.
+get_rigth(Counter,Size,R,_):-  R is Counter + 1.
+
+get_left(Counter,Size,L,1):-  L is -1.
+get_left(Counter,Size,L,_):-  L is Counter - 1.
+
+get_top(Counter,Size,T):-  T is Counter - Size.
+get_bot(Counter,Size,B):-  B is Counter + Size.
+
+get_diogonal1(Counter,Size,D,1):- D is -1.
+get_diogonal1(Counter,Size,D,_):- D is Counter-Size-1.
+get_diogonal2(Counter,Size,D,1):- D is -1.
+get_diogonal2(Counter,Size,D,_):- D is Counter+Size-1.
+get_diogonal3(Counter,Size,D,0):- D is -1.
+get_diogonal3(Counter,Size,D,_):- D is Counter-Size+1.
+get_diogonal4(Counter,Size,D,0):- D is -1.
+get_diogonal4(Counter,Size,D,_):- D is Counter+Size+1.
+
 
 get_adjacent(Board, Counter,Size, Adjacent):-
-  Y is Counter mod Size,
-  A1 is Counter-Size-1,
-  A2 is Counter-Size,
-  (Y = 0->A3 is -1;A3 is Counter-Size+1),
-  A4 is Counter-1,
-  (Y = 0->A5 is -1;A5 is Counter+1),
-  A6 is Counter+Size-1,
-  A7 is Counter+Size,
-  (Y = 0->A8 is -1;A8 is Counter+Size+1),
-  get_element(Board,A1,[],T1),
-  get_element(Board,A2,T1,T2),
-  get_element(Board,A3,T2,T3),
-  get_element(Board,A4,T3,T4),
-  get_element(Board,A5,T4,T5),
-  get_element(Board,A6,T5,T6),
-  get_element(Board,A7,T6,T7),
-  get_element(Board,A8,T7,Adjacent).
+  M is Counter mod Size,
+  get_rigth(Counter,Size,R,M),
+  get_left(Counter,Size,L,M),
+  get_top(Counter,Size,T),
+  get_bot(Counter,Size,B),
+  get_diogonal1(Counter,Size,D1,M),
+  get_diogonal2(Counter,Size,D2,M),
+  get_diogonal3(Counter,Size,D3,M),
+  get_diogonal4(Counter,Size,D4,M),
+
+  get_element(Board,R,[],T1),
+  get_element(Board,L,T1,T2),
+  get_element(Board,T,T2,T3),
+  get_element(Board,B,T3,T4),
+  get_element(Board,D1,T4,T5),
+  get_element(Board,D2,T5,T6),
+  get_element(Board,D3,T6,T7),
+  get_element(Board,D4,T7,Adjacent).
 
 
 check_closed(Board,Size,Counter):-
   get_element(Board,Counter,Element),
   fd_var(Element),
-  Y is Counter mod Size,
-  Z is Counter mod Size,
-  A1 is Counter-Size,
-  (Z = 1->A2 is -1; A2 is Counter-1),
-  (Y = 0->A3 is -1;A3 is Counter+1),
-  A4 is Counter+Size,
-  get_element(Board,A1,E1),
-  get_element(Board,A2,E2),
-  get_element(Board,A3,E3),
-  get_element(Board,A4,E4),
-  (Element #=1 #/\ (
-  (E1 #=1 #/\ E2#=1 #/\ E3#\=1 #/\ E4 #\=1) #\/
-  (E1 #=1 #/\ E3#=1 #/\ E2#\=1 #/\ E4 #\=1) #\/
-  (E1 #=1 #/\ E4#=1 #/\ E2#\=1 #/\ E3 #\=1) #\/
-  (E2 #=1 #/\ E3#=1 #/\ E1#\=1 #/\ E4 #\=1) #\/
-  (E2 #=1 #/\ E4#=1 #/\ E1#\=1 #/\ E3 #\=1) #\/
-  (E3 #=1 #/\ E4#=1 #/\ E1#\=1 #/\ E2 #\=1) )) #\/
-  Element #=0.
+
+  M is Counter mod Size,
+  get_rigth(Counter,Size,R,M),
+  get_left(Counter,Size,L,M),
+  get_top(Counter,Size,T),
+  get_bot(Counter,Size,B),
+
+  get_element(Board,R,E1),
+  get_element(Board,L,E2),
+  get_element(Board,T,E3),
+  get_element(Board,B,E4),
+
+  ((Element #=11 #/\ (
+  (E1 #=11 #/\ E2#=11 #/\ E3#\=11 #/\ E4 #\=11) #\/
+  (E1 #=11 #/\ E3#=11 #/\ E2#\=11 #/\ E4 #\=11) #\/
+  (E1 #=11 #/\ E4#=11 #/\ E2#\=11 #/\ E3 #\=11) #\/
+  (E2 #=11 #/\ E3#=11 #/\ E1#\=11 #/\ E4 #\=11) #\/
+  (E2 #=11 #/\ E4#=11 #/\ E1#\=11 #/\ E3 #\=11) #\/
+  (E3 #=11 #/\ E4#=11 #/\ E1#\=11 #/\ E2 #\=11) )) #\/
+  Element #=0).
 check_closed(Board,Size,Counter).
 
 check_surrounded(Board,Size,Counter):-
   get_element(Board,Counter,E),
   \+fd_var(E),
-  E #>=2,
+  E >=2,
   get_adjacent(Board,Counter,Size,Adjacent),
-  length(Adjacent,L),
-  number_zeros(L,E,Z),
-  global_cardinality(Adjacent,[1-E,0-Z]).
-
+  Z is 8-E,
+  global_cardinality(Adjacent,[11-E,0-Z]).
 
 
 restrict(Board,Size,Counter):-
@@ -90,8 +109,7 @@ restrict(Board,Size,Counter):-
 restrict(Board,Size,Counter).
 
 
-solve(Board,Size):-
+solve(Board,Size,Solution):-
   initialize(Board, Solution),
   restrict(Solution,Size,1),
-  labeling([], Solution),
-  print_board(Solution,Size).
+  labeling([], Solution).
