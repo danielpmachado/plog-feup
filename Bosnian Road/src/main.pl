@@ -15,7 +15,9 @@ menu(1):-
   clear_screen,
   print_board_menu,
   read(Option),get_char(_),
-  board_menu(Option).
+  board_menu(Option),
+  read(X),get_char(_),
+  start.
 
 menu(2):-
   clear_screen,
@@ -23,7 +25,10 @@ menu(2):-
   read(Option),get_char(_),
   generate(Option,Board,Size),
   clear_screen,
-  print_board(Board,Size).
+  print_board(Board,Size),
+  read(X),get_char(_),
+  start.
+
 
 menu(3):-
   clear_screen,
@@ -36,12 +41,16 @@ menu(3):-
   print_stats,
   clear_screen,
   arrange_board(Solution,Printable),
-  print_board(Printable,Size).
+  print_board(Printable,Size),
+  read(X),get_char(_),
+  start.
+
 
 menu(4):-
   abort.
 
 menu(_):-
+  clear_screen,
   false.
 
 board_menu(B):-
