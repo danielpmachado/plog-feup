@@ -90,6 +90,11 @@ arrange_board([O|Os],[N|Ns]):-
   arrange_board(Os,Ns).
 
 arrange_board([O|Os],[N|Ns]):-
+  O = 0,
+  N = ' ',
+  arrange_board(Os,Ns).
+
+arrange_board([O|Os],[N|Ns]):-
   N = O,
   arrange_board(Os,Ns).
 
