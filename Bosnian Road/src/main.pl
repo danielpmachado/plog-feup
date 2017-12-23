@@ -31,22 +31,6 @@ menu(2):-
 
 
 menu(3):-
-  clear_screen,
-  print_size_menu,
-  read(Option),get_char(_),
-  generate(Option,Board,Size),
-  init_stats,
-  solve(Board,Size,Solution),
-  print_time,
-  print_stats,
-  clear_screen,
-  arrange_board(Solution,Printable),
-  print_board(Printable,Size),
-  read(X),get_char(_),
-  start.
-
-
-menu(4):-
   abort.
 
 menu(_):-
