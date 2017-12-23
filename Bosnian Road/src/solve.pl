@@ -14,28 +14,28 @@ initialize([B | Bs], [S | Ss]):-
 
 get_element(Board,Idx,Element):-
   nth1(Idx,Board,Element).
-get_element(Board,Idx,-1).
+get_element(Board,Idx,0).
 
 get_element(Board, Idx, Inputs, [Element | Inputs]):-
   nth1(Idx,Board,Element).
 get_element(_, _, Inputs, Inputs).
 
-get_rigth(Counter,Size,R,0):-  R is -1.
+get_rigth(Counter,Size,R,0):-  R is 0.
 get_rigth(Counter,Size,R,_):-  R is Counter + 1.
 
-get_left(Counter,Size,L,1):-  L is -1.
+get_left(Counter,Size,L,1):-  L is 0.
 get_left(Counter,Size,L,_):-  L is Counter - 1.
 
 get_top(Counter,Size,T):-  T is Counter - Size.
 get_bot(Counter,Size,B):-  B is Counter + Size.
 
-get_diogonal1(Counter,Size,D,1):- D is -1.
+get_diogonal1(Counter,Size,D,1):- D is 0.
 get_diogonal1(Counter,Size,D,_):- D is Counter-Size-1.
-get_diogonal2(Counter,Size,D,1):- D is -1.
+get_diogonal2(Counter,Size,D,1):- D is 0.
 get_diogonal2(Counter,Size,D,_):- D is Counter+Size-1.
-get_diogonal3(Counter,Size,D,0):- D is -1.
+get_diogonal3(Counter,Size,D,0):- D is 0.
 get_diogonal3(Counter,Size,D,_):- D is Counter-Size+1.
-get_diogonal4(Counter,Size,D,0):- D is -1.
+get_diogonal4(Counter,Size,D,0):- D is 0.
 get_diogonal4(Counter,Size,D,_):- D is Counter+Size+1.
 
 
@@ -75,15 +75,18 @@ check_closed(Board,Size,Counter):-
   get_element(Board,T,E3),
   get_element(Board,B,E4),
 
-  ((Element #=11 #/\ (
+  (Element #=11 #/\ (
   (E1 #=11 #/\ E2#=11 #/\ E3#\=11 #/\ E4 #\=11) #\/
   (E1 #=11 #/\ E3#=11 #/\ E2#\=11 #/\ E4 #\=11) #\/
   (E1 #=11 #/\ E4#=11 #/\ E2#\=11 #/\ E3 #\=11) #\/
   (E2 #=11 #/\ E3#=11 #/\ E1#\=11 #/\ E4 #\=11) #\/
   (E2 #=11 #/\ E4#=11 #/\ E1#\=11 #/\ E3 #\=11) #\/
-  (E3 #=11 #/\ E4#=11 #/\ E1#\=11 #/\ E2 #\=11) )) #\/
-  Element #=0).
+  (E3 #=11 #/\ E4#=11 #/\ E1#\=11 #/\ E2 #\=11))) #\/
+  Element #=0.
 check_closed(Board,Size,Counter).
+
+
+
 
 check_surrounded(Board,Size,Counter):-
   get_element(Board,Counter,E),
@@ -111,4 +114,4 @@ restrict(Board,Size,Counter).
 solve(Board,Size,Solution):-
   initialize(Board, Solution),
   restrict(Solution,Size,1),
-  labeling([ff,bisect,down], Solution).
+  labeling([], Solution).
