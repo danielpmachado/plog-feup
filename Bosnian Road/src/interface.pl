@@ -47,21 +47,40 @@ print_size_menu :-
   write('==                                    ==\n'),
   write('========================================\n').
 
+print_black_line(Size,Size):-
+  write('-'),nl.
 
+print_black_line(Size,N):-
+  write('------'),
+  N1 is N+1,
+  print_black_line(Size,N1).
+
+print_space_line(Size,Size):-
+  write('|'),nl.
+
+print_space_line(Size,N):-
+  write('|     '),
+  N1 is N+1,
+  print_space_line(Size,N1).
 
 print_board(Board,Size) :-
   Total is Size*Size,nl,
-  print_row_by_row(Board,Size,Total).
+  print_row_by_row(Board,Size,Total),
+  print_black_line(Size,0), nl.
 
 print_row_by_row(_,_,0).
 print_row_by_row(Board,Size,Total):-
+  print_black_line(Size,0),
+  print_space_line(Size,0),
+  write('|  '),
   print_line(Board,Size,Rest),nl,
+  print_space_line(Size,0),
   T is Total-Size,
   print_row_by_row(Rest,Size,T).
 
 print_line(T,0,T).
 print_line([H|T],Size,Rest):-
-  write(H), write(' '),
+  write(H), write('  |  '),
   S is Size-1,
   print_line(T,S,Rest).
 
