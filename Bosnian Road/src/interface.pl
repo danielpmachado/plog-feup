@@ -17,8 +17,7 @@ print_menu :-
   write('==                                    ==\n'),
   write('==          1 - Solve                 ==\n'),
   write('==          2 - Generate              ==\n'),
-  write('==          3 - Generate & Solve      ==\n'),
-  write('==          4 - Exit                  ==\n'),
+  write('==          3 - Exit                  ==\n'),
   write('==                                    ==\n'),
   write('========================================\n').
 
